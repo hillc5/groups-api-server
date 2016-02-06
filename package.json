@@ -1,0 +1,29 @@
+{
+  "name": "group-app",
+  "version": "0.1.0",
+  "description": "API Server for group application",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "predev": "killall mongod && mongod --port 27018 --dbpath=./data --fork --logpath /dev/null",
+    "dev": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hillc5/group-api-server.git"
+  },
+  "author": "Charles Hill",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hillc5/group-api-server/issues"
+  },
+  "homepage": "https://github.com/hillc5/group-api-server#readme",
+  "dependencies": {
+    "body-parser": "^1.14.2",
+    "cors": "^2.7.1",
+    "es6-promise": "^3.0.2",
+    "express": "^4.13.4",
+    "kerberos": "0.0.18",
+    "mongo": "^0.1.0"
+  }
+}
