@@ -4,8 +4,8 @@ var cors = require('cors');
 var bodyParser = require('body-parser');
 var app = express();
 
-var PORT = process.env.PORT || 8080;
-var DEV_CLIENT = { origin: 'http://localhost:63342' };
+var PORT = process.env.PORT || 9000;
+var DEV_CLIENT = { origin: 'http://localhost:8080' };
 
 function startAPIServer() {
     console.log('Now Starting Server...');
