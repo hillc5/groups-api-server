@@ -1,5 +1,4 @@
-var mongo = require('mongodb').MongoClient,
-    Promise = require('es6-promise').Promise,
+var Promise = require('es6-promise').Promise,
     ObjectId = require('mongodb').ObjectId;
 
 var db = null;
@@ -61,12 +60,9 @@ var userAPI = {
 
         var promise = new Promise(function(resolve, reject) {
             var users = db.collection('users');
-            var userValid = validUser(user);
 
             if (!db) {
                 reject('ERROR.  No Connection');
-            } else if (!userValid.valid) {
-                reject('Invalid User. Missing: ' + userValid.missingFields.join(', '));
             } else {
                 users.find({ email: user.email}).toArray(function(err, result) {
                     if (err) {
@@ -90,27 +86,5 @@ var userAPI = {
 
     }
 };
-
-function validUser(user) {
-    var valid = Boolean(user && user.name && user.email),
-        missingFields = [];
-    if (!valid) {
-        console.log(user.name);
-        if (!user.name) {
-            missingFields.push('name');
-        }
-        if (!user.email) {
-            missingFields.push('email');
-        }
-        return {
-            valid: valid,
-            missingFields: missingFields
-        };
-    } else {
-        return {
-            valid: valid
-        };
-    }
-}
 
 module.exports = userAPI;

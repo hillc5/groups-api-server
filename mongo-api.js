@@ -1,4 +1,5 @@
 var utilApi = require('./mongo-api/mongo-util-api'),
+    groupApi = require('./mongo-api/mongo-group-api'),
     userApi = require('./mongo-api/mongo-user-api');
 
 
@@ -8,7 +9,9 @@ var mongoAPI = {
 
     getUserById: userApi.getUserById,
     getUserByEmail: userApi.getUserByEmail,
-    createNewUser: userApi.createNewUser
+    createNewUser: userApi.createNewUser,
+
+    createNewGroup: groupApi.createNewGroup
 };
 
 module.exports = mongoAPI;
