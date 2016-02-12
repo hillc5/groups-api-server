@@ -1,17 +1,21 @@
-var utilApi = require('./mongo-api/mongo-util-api'),
-    groupApi = require('./mongo-api/mongo-group-api'),
-    userApi = require('./mongo-api/mongo-user-api');
+var utilAPI = require('./mongo-api/mongo-util-api'),
+    groupAPI = require('./mongo-api/mongo-group-api'),
+    userAPI = require('./mongo-api/mongo-user-api');
 
 
 var mongoAPI = {
 
-    connect: utilApi.connect,
+    // Connects to the DB
+    connect: utilAPI.connect,
 
-    getUserById: userApi.getUserById,
-    getUserByEmail: userApi.getUserByEmail,
-    createNewUser: userApi.createNewUser,
+    // Mongo User Collection API methods
+    getUserById: userAPI.getUserById,
+    getUserByEmail: userAPI.getUserByEmail,
+    createNewUser: userAPI.createNewUser,
 
-    createNewGroup: groupApi.createNewGroup
+    // Mongo Group Collection API methods
+    createNewGroup: groupAPI.createNewGroup,
+    getGroupsByName: groupAPI.getGroupsByName
 };
 
 module.exports = mongoAPI;

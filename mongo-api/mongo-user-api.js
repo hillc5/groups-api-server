@@ -2,11 +2,13 @@ var Promise = require('es6-promise').Promise,
     ObjectId = require('mongodb').ObjectId;
 
 var db = null;
+var userCollection = null;
 
 var userAPI = {
 
     setDBConnection: function setDBConnection(connection) {
         db = connection;
+        userCollection = db.collection('user');
         console.log('MONGO: User API ONLINE');
     },
 
@@ -17,8 +19,7 @@ var userAPI = {
             if (!db) {
                 reject('ERROR. No Connection');
             } else {
-                var users = db.collection('users');
-                users.find({ _id: ObjectId(id) }).toArray(function(err, result) {
+                userCollection.find({ _id: ObjectId(id) }).toArray(function(err, result) {
                     if (err) {
                         reject(err);
                     } else if (result.length === 0) {
@@ -33,15 +34,13 @@ var userAPI = {
         return promise;
     },
 
-    getUserByEmail: function getUserByEmail(emailQuery) {
+    getUserByEmail: function getUserByEmail(email) {
 
         var promise = new Promise(function(resolve, reject) {
             if (!db) {
                 reject('ERROR.  No Connection');
             } else {
-                var users = db.collection('users');
-                users.find(emailQuery).toArray(function(err, result) {
-                    console.log(result);
+                userCollection.find({ email: email }).toArray(function(err, result) {
                     if (err) {
                         reject(err);
                     } else if( result.length === 0) {
@@ -59,18 +58,16 @@ var userAPI = {
     createNewUser: function createNewUser(user) {
 
         var promise = new Promise(function(resolve, reject) {
-            var users = db.collection('users');
-
             if (!db) {
                 reject('ERROR.  No Connection');
             } else {
-                users.find({ email: user.email}).toArray(function(err, result) {
+                userCollection.find({ email: user.email}).toArray(function(err, result) {
                     if (err) {
                         reject(err);
                     } else if (result.length > 0) {
                         reject("User already exists with " + user.email);
                     } else {
-                        users.insert(user, function(err, result) {
+                        userCollection.insert(user, function(err, result) {
                             if (err) {
                                 reject(err);
                             } else {
@@ -78,7 +75,7 @@ var userAPI = {
                             }
                         });
                     }
-                }.bind(this))
+                });
             }
         });
 

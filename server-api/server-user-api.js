@@ -3,8 +3,10 @@ var mongoAPI = require('../mongo-api');
 var userAPI = {
 
     getUserById: function getUserById(req, res) {
-        var search = req.params.id,
+        var search,
             errors;
+
+        req.sanitize('id').trim();
 
         req.checkParams('id', 'Invalid format.  Id must be a Mongo ObjectId').isMongoId();
         errors = req.validationErrors();
@@ -12,6 +14,7 @@ var userAPI = {
         if (errors) {
             res.status(400).send(errors);
         } else {
+            search = req.params.id;
             mongoAPI.getUserById(search).then(function(user) {
                 res.status(200).send(user);
             }, function() {
@@ -21,8 +24,10 @@ var userAPI = {
     },
 
     getUserByEmail: function getUserByEmail(req, res) {
-        var search = { email: req.params.email },
+        var email,
             errors;
+
+        req.sanitize('email').trim();
 
         req.checkParams('email', 'Invalid format.  Incorrect email format').isEmail();
         errors = req.validationErrors();
@@ -30,7 +35,9 @@ var userAPI = {
         if (errors) {
             res.status(400).send(errors);
         } else {
-            mongoAPI.getUserByEmail(search).then(function(user) {
+            email = req.params.email.toLowerCase();
+            console.log(email);
+            mongoAPI.getUserByEmail(email).then(function(user) {
                 res.status(200).send(user);
             }, function() {
                 res.status(404).send({ errorMessage: 'No user for ' + req.params.email });
@@ -41,6 +48,9 @@ var userAPI = {
     createUser:  function createUser(req, res) {
         var errors,
             user;
+
+        req.sanitize('name').trim();
+        req.sanitize('email').trim();
 
         req.checkBody({
             'name': {
@@ -65,7 +75,7 @@ var userAPI = {
         } else {
             user = {
                 name: req.body.name,
-                email: req.body.email,
+                email: req.body.email.toLowerCase(),
                 groups: [],
                 posts: [],
                 events: []

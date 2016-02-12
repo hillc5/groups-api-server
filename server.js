@@ -2,7 +2,7 @@ var express = require('express'),
     connectToMongo = require('./mongo-api.js').connect,
     userAPI = require('./server-api/server-user-api'),
     groupAPI = require('./server-api/server-group-api'),
-    cors = require('cors'),
+    CORS = require('cors'),
     bodyParser = require('body-parser'),
     validator = require('express-validator'),
     app = express();
@@ -16,7 +16,7 @@ function startAPIServer() {
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({ extended: true }));
     app.use(validator());
-    app.use(cors(DEV_CLIENT));
+    app.use(CORS(DEV_CLIENT));
 
     // USER APIS
     app.get('/api/get-user/id/:id', userAPI.getUserById);
@@ -24,6 +24,7 @@ function startAPIServer() {
     app.post('/api/create-user', userAPI.createUser);
 
     // GROUP APIS
+    app.get('/api/get-group/name/:name', groupAPI.getGroupsByName);
     app.post('/api/create-group', groupAPI.createGroup);
 
     app.listen(PORT);

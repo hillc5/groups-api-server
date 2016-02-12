@@ -6,7 +6,8 @@ var groupAPI = {
         var errors,
             group;
 
-        console.log(req.body);
+        req.sanitize('name').trim();
+        req.sanitize('ownerId').trim();
 
         req.checkBody({
             'name': {
@@ -45,7 +46,34 @@ var groupAPI = {
             }, function(error) {
                 console.log(error);
                 res.status(400).send({ errorMessage: error });
-            })
+            });
+        }
+    },
+
+    getGroupsByName: function getGroupsByName(req, res) {
+        var name,
+            errors;
+
+        req.sanitize('name').trim();
+
+        req.checkParams({
+            'name': {
+                notEmpty: true
+            }
+        });
+
+        errors = req.validationErrors();
+
+        if (errors) {
+            res.status(400).send(errors);
+        } else {
+            name = req.params.name;
+
+            mongoAPI.getGroupsByName(name).then(function(response) {
+                res.status(200).send(response);
+            }, function() {
+                res.status(404).send( { errorMessage: 'No groups with the name ' + req.params.name });
+            });
         }
     }
 

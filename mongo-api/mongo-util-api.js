@@ -1,6 +1,6 @@
 var mongo = require('mongodb').MongoClient,
-    userApi = require('./mongo-user-api'),
-    groupApi = require('./mongo-group-api');
+    userAPI = require('./mongo-user-api'),
+    groupAPI = require('./mongo-group-api');
 
 var DB_CONFIG = require('../config/database.js');
 
@@ -23,8 +23,9 @@ var utilAPI = {
                         db = database;
                         console.log('Connection SUCCESS:', DB_CONFIG.url);
 
-                        userApi.setDBConnection(db);
-                        groupApi.setDBConnection(db);
+                        userAPI.setDBConnection(db);
+                        groupAPI.setDBConnection(db);
+
                         resolve();
                     }
                 });
