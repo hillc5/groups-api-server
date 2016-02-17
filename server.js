@@ -25,6 +25,7 @@ function startAPIServer() {
     app.put('/api/update-user/add-group', userAPI.addGroupToUser);
 
     // GROUP APIS
+    app.get('/api/get-group/id/:id', groupAPI.getGroupById);
     app.get('/api/get-group/name/:name', groupAPI.getGroupsByName);
     app.post('/api/create-group', groupAPI.createGroup);
 

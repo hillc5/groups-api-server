@@ -16,6 +16,7 @@ var mongoAPI = {
 
     // Mongo Group Collection API methods
     createNewGroup: groupAPI.createNewGroup,
+    getGroupById: groupAPI.getGroupById,
     getGroupsByName: groupAPI.getGroupsByName
 };
 

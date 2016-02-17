@@ -50,6 +50,34 @@ var groupAPI = {
         }
     },
 
+    getGroupById: function getGroupById(req, res) {
+        var errors;
+
+        req.sanitize('id').trim();
+
+        req.checkParams({
+            'id': {
+                notEmpty: true,
+                isMongoId: {
+                    errorMessage: 'Id must be a Mongo ObjectId'
+                }
+            }
+        });
+
+        errors = req.validationErrors();
+
+        if (errors) {
+            res.status(400).send(errors);
+        } else {
+            mongoAPI.getGroupById(req.params.id).then(function(group) {
+                res.status(200).send(group);
+            }).catch(function(error) {
+                res.status(404).send(error);
+            });
+        }
+
+    },
+
     getGroupsByName: function getGroupsByName(req, res) {
         var name,
             errors;

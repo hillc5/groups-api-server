@@ -51,9 +51,18 @@ var groupAPI = {
         var promise = new Promise(function(resolve, reject) {
 
             if (!db) {
-                reject()
+                reject(NO_CONN_ERROR);
+            } else {
+                groupCollection.find({ _id: ObjectId(id) }).toArray(function(err, result) {
+                    if (err) {
+                        reject(err);
+                    } else if (result.length === 0) {
+                        reject('No Results Found');
+                    } else {
+                        resolve(result[0]);
+                    }
+                });
             }
-
         });
 
         return promise;
