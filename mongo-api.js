@@ -12,6 +12,7 @@ var mongoAPI = {
     getUserById: userAPI.getUserById,
     getUserByEmail: userAPI.getUserByEmail,
     createNewUser: userAPI.createNewUser,
+    addGroupToUser: userAPI.addGroupToUser,
 
     // Mongo Group Collection API methods
     createNewGroup: groupAPI.createNewGroup,

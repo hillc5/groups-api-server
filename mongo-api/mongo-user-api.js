@@ -80,7 +80,27 @@ var userAPI = {
         });
 
         return promise;
+    },
 
+    addGroupToUser: function addGroupToUser(userId, group) {
+
+        var promise = new Promise(function(resolve, reject) {
+
+            if (!db) {
+                reject('ERROR. No Connection');
+            } else {
+                userCollection.update({ _id: ObjectId(userId) }, { $push: { groups : group } },
+                function(err, result) {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(result);
+                    }
+                });
+            }
+        });
+
+        return promise;
     }
 };
 

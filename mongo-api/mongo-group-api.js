@@ -9,7 +9,7 @@ var groupAPI = {
 
     setDBConnection: function setDBConnection(connection) {
         db = connection;
-        groupCollection = db.collection('group');
+        groupCollection = db.collection('groups');
         console.log('MONGO: Group API ONLINE');
     },
 

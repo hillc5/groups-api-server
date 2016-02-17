@@ -87,6 +87,63 @@ var userAPI = {
                 res.status(400).send({ errorMessage: error });
             });
         }
+    },
+
+    addGroupToUser: function addGroupToUser(req, res) {
+
+                var errors;
+
+        req.sanitize('id').trim();
+        req.sanitize('group._id').trim();
+        req.sanitize('group.name').trim();
+        req.sanitize('group.ownerId').trim();
+
+        req.checkBody({
+            'id': {
+                notEmpty: true
+            },
+
+            'group': {
+                notEmpty: true
+            },
+
+            'group._id': {
+                notEmpty: true,
+                isMongoId: {
+                    errorMessage: 'Group Id must be a Mongo ObjectId'
+                }
+            },
+
+            'group.ownerId': {
+                notEmpty: true,
+                isMongoId: {
+                    errorMessage: 'Owner Id must be a Mongo ObjectId'
+                }
+            },
+
+            'group.public': {
+                notEmpty: true,
+                isBoolean: {
+                    errorMessage: 'public must be a valid boolean value'
+                }
+            },
+
+            'group.name': {
+                notEmpty: true
+            }
+        });
+
+        errors = req.validationErrors();
+
+        if(errors) {
+            res.status(400).send(errors);
+        } else {
+            mongoAPI.addGroupToUser(req.body.id, req.body.group).then(function(result) {
+                res.status(200).send(result);
+            }).catch(function(error) {
+                res.status(404).send(error);
+            });
+        }
     }
 };
 
