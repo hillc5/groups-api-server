@@ -5,6 +5,8 @@ var Promise = require('es6-promise').Promise,
 var db = null;
 var groupCollection = null;
 
+var NO_CONN_ERROR = 'ERROR. No Connection';
+
 var groupAPI = {
 
     setDBConnection: function setDBConnection(connection) {
@@ -19,7 +21,7 @@ var groupAPI = {
 
 
             if (!db) {
-                reject('ERROR. No Connection');
+                reject(NO_CONN_ERROR);
             } else {
                 mongoUserAPI.getUserById(group.ownerId).then(function(result) {
                     var user = result;
@@ -29,7 +31,8 @@ var groupAPI = {
                         if (err) {
                             reject(err);
                         } else {
-                            // TODO add an addGroupToUser api method in user api and call it here
+                            // Adding group to creator's groups array
+                            mongoUserAPI.addGroupToUser(group.ownerId, result.ops[0]);
                             resolve(result);
                         }
                     });
@@ -43,11 +46,24 @@ var groupAPI = {
         return promise;
     },
 
+    getGroupById: function getGroupById(id) {
+
+        var promise = new Promise(function(resolve, reject) {
+
+            if (!db) {
+                reject()
+            }
+
+        });
+
+        return promise;
+    },
+
     getGroupsByName: function getGroupsByName(name) {
 
         var promise = new Promise(function(resolve, reject) {
             if (!db) {
-                reject('ERROR. No Connection');
+                reject(NO_CONN_ERROR);
             } else {
                 groupCollection.find({ name: name }).toArray(function(err, result) {
                     if (err) {
@@ -62,7 +78,6 @@ var groupAPI = {
         });
 
         return promise;
-
     }
 
 };

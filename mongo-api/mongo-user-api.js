@@ -4,6 +4,8 @@ var Promise = require('es6-promise').Promise,
 var db = null;
 var userCollection = null;
 
+var NO_CONN_ERROR = 'ERROR. No Connection';
+
 var userAPI = {
 
     setDBConnection: function setDBConnection(connection) {
@@ -17,7 +19,7 @@ var userAPI = {
 
         var promise = new Promise(function(resolve, reject) {
             if (!db) {
-                reject('ERROR. No Connection');
+                reject(NO_CONN_ERROR);
             } else {
                 userCollection.find({ _id: ObjectId(id) }).toArray(function(err, result) {
                     if (err) {
@@ -38,7 +40,7 @@ var userAPI = {
 
         var promise = new Promise(function(resolve, reject) {
             if (!db) {
-                reject('ERROR.  No Connection');
+                reject(NO_CONN_ERROR);
             } else {
                 userCollection.find({ email: email }).toArray(function(err, result) {
                     if (err) {
@@ -87,7 +89,7 @@ var userAPI = {
         var promise = new Promise(function(resolve, reject) {
 
             if (!db) {
-                reject('ERROR. No Connection');
+                reject(NO_CONN_ERROR);
             } else {
                 userCollection.update({ _id: ObjectId(userId) }, { $push: { groups : group } },
                 function(err, result) {
