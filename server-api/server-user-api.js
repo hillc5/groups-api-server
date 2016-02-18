@@ -8,7 +8,15 @@ var userAPI = {
 
         req.sanitize('id').trim();
 
-        req.checkParams('id', 'Invalid format.  Id must be a Mongo ObjectId').isMongoId();
+        req.checkParams({
+            'id': {
+                notEmpty: true,
+                isMongoId: {
+                    errorMessage: 'id must be a valid Mongo ObjectId'
+                }
+            }
+        });
+
         errors = req.validationErrors();
 
         if (errors) {
@@ -29,7 +37,15 @@ var userAPI = {
 
         req.sanitize('email').trim();
 
-        req.checkParams('email', 'Invalid format.  Incorrect email format').isEmail();
+        req.checkParams({
+            'email': {
+                notEmpty: true,
+                isEmail: {
+                    errorMessage: 'email must be a valid email address'
+                }
+            }
+        });
+
         errors = req.validationErrors();
 
         if (errors) {
@@ -90,8 +106,9 @@ var userAPI = {
     },
 
     addGroupToUser: function addGroupToUser(req, res) {
-
-                var errors;
+        var errors,
+            group,
+            requestGroup;
 
         req.sanitize('id').trim();
         req.sanitize('group._id').trim();
@@ -138,7 +155,9 @@ var userAPI = {
         if(errors) {
             res.status(400).send(errors);
         } else {
-            mongoAPI.addGroupToUser(req.body.id, req.body.group).then(function(result) {
+            requestGroup = req.body.group;
+            group = mongoAPI.createGroupSnapshot(requestGroup);
+            mongoAPI.addGroupToUser(req.body.id, group).then(function(result) {
                 res.status(200).send(result);
             }).catch(function(error) {
                 res.status(404).send(error);

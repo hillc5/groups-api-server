@@ -1,5 +1,6 @@
 var Promise = require('es6-promise').Promise,
     mongoUserAPI = require('./mongo-user-api'),
+    apiUtil = require('./api-util'),
     ObjectId = require('mongodb').ObjectId;
 
 var db = null;
@@ -18,7 +19,7 @@ var groupAPI = {
     createNewGroup: function createNewGroup(group) {
 
         var promise = new Promise(function(resolve, reject) {
-
+            var groupSnapshot;
 
             if (!db) {
                 reject(NO_CONN_ERROR);
@@ -32,7 +33,9 @@ var groupAPI = {
                             reject(err);
                         } else {
                             // Adding group to creator's groups array
-                            mongoUserAPI.addGroupToUser(group.ownerId, result.ops[0]);
+                            groupSnapshot = apiUtil.createGroupSnapshot(result.ops[0]);
+                            mongoUserAPI.addGroupToUser(group.ownerId, groupSnapshot);
+
                             resolve(result);
                         }
                     });
@@ -81,6 +84,33 @@ var groupAPI = {
                         reject("No Group found");
                     } else {
                         resolve(result);
+                    }
+                });
+            }
+        });
+
+        return promise;
+    },
+
+    addUserToGroup: function  addUserToGroup(groupId, user) {
+
+        var promise = new Promise(function(resolve, reject) {
+
+            if (!db) {
+                reject(NO_CONN_ERROR);
+            } else {
+                groupCollection.findAndModify(
+                    { _id: ObjectId(groupId) },
+                    [[ '_id',  'asc']],
+                    { $push: { users: user } },
+                    { new: true },
+                    function(err, results) {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        var group = apiUtil.createGroupSnapshot(results.value);
+                        mongoUserAPI.addGroupToUser(user._id, group);
+                        resolve(results);
                     }
                 });
             }

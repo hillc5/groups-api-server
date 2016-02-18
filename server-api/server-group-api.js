@@ -103,6 +103,62 @@ var groupAPI = {
                 res.status(404).send( { errorMessage: 'No groups with the name ' + req.params.name });
             });
         }
+    },
+
+    addUserToGroup: function addUserToGroup(req, res) {
+        var user,
+            requestUser,
+            errors;
+
+        req.sanitize('id').trim();
+        req.sanitize('user.name').trim();
+        req.sanitize('user._id').trim();
+        req.sanitize('user.email').trim();
+
+        req.checkBody({
+            'id': {
+                notEmpty: true,
+                isMongoId: {
+                    errorMessage: 'id must be a valid Mongo ObjectId'
+                }
+            },
+
+            'user': {
+                notEmpty: true
+            },
+
+            'user.name': {
+                notEmpty: true
+            },
+
+            'user._id': {
+                notEmpty: true,
+                isMongoId: {
+                    errorMessage: 'user._id must be a valid Mongo ObjectId'
+                }
+            },
+
+            'user.email': {
+                notEmpty: true,
+                isEmail: {
+                    errorMessage: 'email must be a valid email address'
+                }
+            }
+        });
+
+        errors = req.validationErrors();
+
+        if (errors) {
+            res.status(400).send(errors);
+        } else {
+            requestUser = req.body.user;
+            user = mongoAPI.createUserSnapshot(requestUser);
+            mongoAPI.addUserToGroup(req.body.id, user).then(function(result) {
+                res.status(200).send(result);
+            }).catch(function(error) {
+                res.status(404).send(error);
+            });
+        }
     }
 
 };
