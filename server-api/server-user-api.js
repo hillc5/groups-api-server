@@ -52,7 +52,6 @@ var userAPI = {
             res.status(400).send(errors);
         } else {
             email = req.params.email.toLowerCase();
-            console.log(email);
             mongoAPI.getUserByEmail(email).then(function(user) {
                 res.status(200).send(user);
             }, function() {
@@ -81,6 +80,10 @@ var userAPI = {
                 isEmail: {
                     errorMessage: 'Invalid email format'
                 }
+            },
+
+            'password': {
+                notEmpty: true
             }
         });
 
@@ -89,79 +92,51 @@ var userAPI = {
         if (errors) {
             res.status(400).send(errors);
         } else {
-            user = {
-                name: req.body.name,
-                email: req.body.email.toLowerCase(),
-                groups: [],
-                posts: [],
-                events: []
-            };
-            mongoAPI.createNewUser(user).then(function(result) {
-                res.status(201).send({ success: 'SUCCESS', user: result.ops[0] });
-            }, function(error) {
-                console.log(error);
+            mongoAPI.storeUserCredentials(req.body.email, req.body.password).then(function() {
+                user = {
+                    name: req.body.name,
+                    email: req.body.email.toLowerCase(),
+                    groups: [],
+                    posts: [],
+                    events: [],
+                    creationDate: new Date()
+                };
+                mongoAPI.createNewUser(user).then(function(result) {
+                    res.status(201).send({ user: result });
+                }, function(error) {
+                    res.status(400).send({ errorMessage: error });
+                });
+            }).catch(function(error) {
                 res.status(400).send({ errorMessage: error });
-            });
+            })
         }
     },
-
-    addGroupToUser: function addGroupToUser(req, res) {
-        var errors,
-            group,
-            requestGroup;
-
-        req.sanitize('id').trim();
-        req.sanitize('group._id').trim();
-        req.sanitize('group.name').trim();
-        req.sanitize('group.ownerId').trim();
+    validateUser: function validateUser(req, res) {
+        var errors;
 
         req.checkBody({
-            'id': {
-                notEmpty: true
-            },
-
-            'group': {
-                notEmpty: true
-            },
-
-            'group._id': {
+            'email': {
                 notEmpty: true,
-                isMongoId: {
-                    errorMessage: 'Group Id must be a Mongo ObjectId'
+                isEmail: {
+                    errorMessage: 'Invalid email format'
                 }
             },
 
-            'group.ownerId': {
-                notEmpty: true,
-                isMongoId: {
-                    errorMessage: 'Owner Id must be a Mongo ObjectId'
-                }
-            },
-
-            'group.public': {
-                notEmpty: true,
-                isBoolean: {
-                    errorMessage: 'public must be a valid boolean value'
-                }
-            },
-
-            'group.name': {
+            'password': {
                 notEmpty: true
             }
         });
 
         errors = req.validationErrors();
 
-        if(errors) {
+        if (errors) {
             res.status(400).send(errors);
         } else {
-            requestGroup = req.body.group;
-            group = mongoAPI.createGroupSnapshot(requestGroup);
-            mongoAPI.addGroupToUser(req.body.id, group).then(function(result) {
+            mongoAPI.validateUser(req.body.email, req.body.password).then(function(result) {
                 res.status(200).send(result);
             }).catch(function(error) {
-                res.status(404).send(error);
-            });
+                res.status(401).send(error);
+            })
         }
     }
 };

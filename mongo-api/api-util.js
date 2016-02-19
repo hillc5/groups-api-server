@@ -5,6 +5,7 @@ module.exports = {
             name: group.name,
             public: group.public,
             creationDate: group.creationDate,
+            signupDate: new Date(),
             ownerId: group.ownerId
         };
     },
@@ -13,7 +14,8 @@ module.exports = {
         return {
             _id: user._id,
             name: user.name,
-            email: user.email
+            email: user.email,
+            signupDate: new Date()
         }
     }
 };

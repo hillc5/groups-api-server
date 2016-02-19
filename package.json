@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "node server.js"
+    "dev": "NODE_ENV=development LOG_FMT=dev PORT=8080 node server.js"
   },
   "repository": {
     "type": "git",
@@ -26,6 +26,7 @@
     "express-validator": "^2.19.1",
     "jsonwebtoken": "^5.5.4",
     "kerberos": "0.0.18",
-    "mongo": "^0.1.0"
+    "mongo": "^0.1.0",
+    "morgan": "^1.6.1"
   }
 }

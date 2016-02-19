@@ -1,5 +1,6 @@
 var Promise = require('es6-promise').Promise,
-    ObjectId = require('mongodb').ObjectId;
+    ObjectId = require('mongodb').ObjectId,
+    authAPI = require('./mongo-auth-api');
 
 var db = null;
 var userCollection = null;
@@ -25,7 +26,7 @@ var userAPI = {
                     if (err) {
                         reject(err);
                     } else if (result.length === 0) {
-                        reject("No Results Found");
+                        reject("There is no user with that id");
                     } else {
                         resolve(result[0]);
                     }
@@ -46,7 +47,7 @@ var userAPI = {
                     if (err) {
                         reject(err);
                     } else if( result.length === 0) {
-                        reject("No Results Found");
+                        reject("There is no user with that email address");
                     } else {
                         resolve(result[0]);
                     }
@@ -66,14 +67,14 @@ var userAPI = {
                 userCollection.find({ email: user.email}).toArray(function(err, result) {
                     if (err) {
                         reject(err);
-                    } else if (result.length > 0) {
+                    } else if (result.length != 0) {
                         reject("User already exists with " + user.email);
                     } else {
                         userCollection.insert(user, function(err, result) {
                             if (err) {
                                 reject(err);
                             } else {
-                                resolve(result);
+                                resolve(result.ops[0]);
                             }
                         });
                     }

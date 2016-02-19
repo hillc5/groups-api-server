@@ -19,24 +19,26 @@ var groupAPI = {
     createNewGroup: function createNewGroup(group) {
 
         var promise = new Promise(function(resolve, reject) {
-            var groupSnapshot;
+            var groupSnapshot,
+                newGroup;
 
             if (!db) {
                 reject(NO_CONN_ERROR);
             } else {
                 mongoUserAPI.getUserById(group.ownerId).then(function(result) {
-                    var user = result;
-                    group.users.push({ _id: user._id, name: user.name, email: user.email });
+                    var user = apiUtil.createUserSnapshot(result);
+                    group.users.push(user);
                     // TODO disallow same name and owner for any new group
                     groupCollection.insert(group, function(err, result) {
                         if (err) {
                             reject(err);
                         } else {
+                            newGroup = result.ops[0];
                             // Adding group to creator's groups array
-                            groupSnapshot = apiUtil.createGroupSnapshot(result.ops[0]);
+                            groupSnapshot = apiUtil.createGroupSnapshot(newGroup);
                             mongoUserAPI.addGroupToUser(group.ownerId, groupSnapshot);
 
-                            resolve(result);
+                            resolve(newGroup);
                         }
                     });
                 }, function() {

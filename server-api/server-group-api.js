@@ -42,9 +42,8 @@ var groupAPI = {
             };
 
             mongoAPI.createNewGroup(group).then(function(result) {
-                res.status(201).send({ success: 'SUCCESS', group: result.ops[0]});
+                res.status(201).send({ group: result});
             }, function(error) {
-                console.log(error);
                 res.status(400).send({ errorMessage: error });
             });
         }
