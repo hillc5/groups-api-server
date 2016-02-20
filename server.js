@@ -32,7 +32,9 @@ function startAPIServer() {
     // AUTH APIS
     app.post('/api/auth/validate-user', authAPI.validateUser);
 
-    // TODO set up middleware to validate jwt
+    // All routes underneath this middleware will need a token sent along with
+    // the request.
+    app.use(authAPI.validateToken);
 
     // USER APIS
     app.get('/api/get-user/id/:id', userAPI.getUserById);

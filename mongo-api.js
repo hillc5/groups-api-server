@@ -13,6 +13,7 @@ var mongoAPI = {
     // Mongo Auth Collection API Methods
     storeUserCredentials: authAPI.storeUserCredentials,
     validateUser: authAPI.validateUser,
+    getUserSignature: authAPI.getUserSignature,
 
     // Mongo User Collection API methods
     getUserById: userAPI.getUserById,

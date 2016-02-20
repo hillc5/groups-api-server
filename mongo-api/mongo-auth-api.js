@@ -1,4 +1,5 @@
 var Promise = require('es6-promise').Promise,
+    ObjectId = require('mongodb').ObjectId,
     bcrypt = require('bcrypt'),
     uuid = require('node-uuid'),
     SLT_FCTR = 14;
@@ -87,6 +88,23 @@ var authAPI = {
                             resolve({ id: id, signature: signature });
                         }
                     })
+                }
+            });
+        });
+
+        return promise;
+    },
+
+    getUserSignature: function getUserSignature(id) {
+
+        var promise = new Promise(function(resolve, reject) {
+            authCollection.find({ _id: ObjectId(id) }).toArray(function(err, results) {
+                if (err) {
+                    reject(err);
+                } else if (results.length === 0) {
+                    reject('No user for id: ' + id);
+                } else {
+                    resolve(results[0]);
                 }
             });
         });

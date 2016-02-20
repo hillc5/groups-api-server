@@ -1,6 +1,5 @@
 var Promise = require('es6-promise').Promise,
-    ObjectId = require('mongodb').ObjectId,
-    authAPI = require('./mongo-auth-api');
+    ObjectId = require('mongodb').ObjectId;
 
 var db = null;
 var userCollection = null;
