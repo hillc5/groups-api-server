@@ -1,5 +1,6 @@
 var Promise = require('es6-promise').Promise,
     bcrypt = require('bcrypt'),
+    uuid = require('node-uuid'),
     SLT_FCTR = 14;
 
 var db = null;
@@ -45,7 +46,8 @@ var authAPI = {
                     reject("User already exists with " + email);
                 } else {
                     encrypt(password).then(function(hash) {
-                        authCollection.insert({ email: email, password: hash }, function(err) {
+                        var secret = uuid.v4();
+                        authCollection.insert({ email: email, password: hash, secret: secret }, function(err) {
                             if (err) {
                                 reject(err);
                             } else {
@@ -69,6 +71,8 @@ var authAPI = {
 
         var promise = new Promise(function(resolve, reject) {
             authCollection.find({ email: email }).toArray(function(err, result) {
+                var secret = result.secret,
+                    name = result.name;
                 if (err) {
                     reject(err);
                 } else if (result.length === 0) {
@@ -77,8 +81,10 @@ var authAPI = {
                     bcrypt.compare(password, result[0].password, function(err, result) {
                         if (err) {
                             reject(err);
+                        } else if (result === false) {
+                            reject('Incorrect Password');
                         } else {
-                            resolve(result);
+                            resolve({ name: name, secret: secret });
                         }
                     })
                 }
@@ -86,7 +92,7 @@ var authAPI = {
         });
 
         return promise;
-    },
+    }
 
 
 };

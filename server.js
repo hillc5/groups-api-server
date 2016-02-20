@@ -1,6 +1,5 @@
 var express = require('express'),
     connectToMongo = require('./mongo-api.js').connect,
-    auth_config = require('./config/auth'),
     userAPI = require('./server-api/server-user-api'),
     groupAPI = require('./server-api/server-group-api'),
 
@@ -15,9 +14,6 @@ var DEV_CLIENT = { origin: 'http://localhost:' + PORT };
 
 function startAPIServer() {
     console.log('Now Starting Server...');
-
-    // secret for signing jwt
-    app.set('secret', auth_config.secret);
 
     // body parser parses body and url params and places them on the req
     // object as simple attributes
@@ -34,6 +30,8 @@ function startAPIServer() {
 
     // AUTH APIS
     app.post('/api/auth/validate-user', userAPI.validateUser);
+
+    // TODO set up middleware to test jwt authentication
 
     // USER APIS
     app.get('/api/get-user/id/:id', userAPI.getUserById);
