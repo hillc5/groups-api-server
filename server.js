@@ -1,5 +1,6 @@
 var express = require('express'),
     connectToMongo = require('./mongo-api.js').connect,
+    authAPI = require('./server-api/server-auth-api'),
     userAPI = require('./server-api/server-user-api'),
     groupAPI = require('./server-api/server-group-api'),
 
@@ -29,9 +30,9 @@ function startAPIServer() {
     app.use(CORS(DEV_CLIENT));
 
     // AUTH APIS
-    app.post('/api/auth/validate-user', userAPI.validateUser);
+    app.post('/api/auth/validate-user', authAPI.validateUser);
 
-    // TODO set up middleware to test jwt authentication
+    // TODO set up middleware to validate jwt
 
     // USER APIS
     app.get('/api/get-user/id/:id', userAPI.getUserById);
