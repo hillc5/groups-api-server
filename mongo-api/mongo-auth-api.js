@@ -46,8 +46,8 @@ var authAPI = {
                     reject("User already exists with " + email);
                 } else {
                     encrypt(password).then(function(hash) {
-                        var secret = uuid.v4();
-                        authCollection.insert({ email: email, password: hash, secret: secret }, function(err) {
+                        var signature = uuid.v4();
+                        authCollection.insert({ email: email, password: hash, signature: signature }, function(err) {
                             if (err) {
                                 reject(err);
                             } else {
@@ -71,8 +71,8 @@ var authAPI = {
 
         var promise = new Promise(function(resolve, reject) {
             authCollection.find({ email: email }).toArray(function(err, result) {
-                var secret = result.secret,
-                    name = result.name;
+                var signature = result[0].signature,
+                    id = result[0]._id;
                 if (err) {
                     reject(err);
                 } else if (result.length === 0) {
@@ -84,7 +84,7 @@ var authAPI = {
                         } else if (result === false) {
                             reject('Incorrect Password');
                         } else {
-                            resolve({ name: name, secret: secret });
+                            resolve({ id: id, signature: signature });
                         }
                     })
                 }
