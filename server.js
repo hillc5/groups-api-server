@@ -29,6 +29,14 @@ function startAPIServer() {
     // cors allows the handling of Cross-Origin-Resource-Sharing
     app.use(CORS(DEV_CLIENT));
 
+    app.use(function(req, res, next) {
+        var cluster = require('cluster');
+        if(cluster.isWorker) {
+            console.log('Worker %d received request', cluster.worker.id);
+        };
+        next();
+    });
+
     // AUTH APIS
     app.post('/api/create-user', userAPI.createUser);
     app.post('/api/auth/validate-user', authAPI.validateUser);
@@ -51,4 +59,10 @@ function startAPIServer() {
     console.log("Server Listening on " + PORT + '...');
 }
 
-connectToMongo().then(startAPIServer, console.err);
+function start() {
+    connectToMongo().then(startAPIServer, console.err);
+}
+
+if (require.main = module) {
+    start();
+}
