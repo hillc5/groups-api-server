@@ -94,13 +94,14 @@ var authAPI = {
 
         var promise = new Promise(function(resolve, reject) {
             authCollection.find({ email: email }).toArray(function(err, result) {
-                var signature = result[0].signature,
-                    id = result[0]._id;
+                var signature, id;
                 if (err) {
                     reject(err);
                 } else if (result.length === 0) {
                     reject('There is no user with that email address');
                 } else {
+                    signature = result[0].signature;
+                    id = result[0]._id;
                     bcrypt.compare(password, result[0].password, function(err, result) {
                         var token;
                         if (err) {
