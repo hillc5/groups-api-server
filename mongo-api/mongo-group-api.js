@@ -107,13 +107,14 @@ var groupAPI = {
                     { $push: { users: user } },
                     { new: true },
                     function(err, results) {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        var group = apiUtil.createGroupSnapshot(results.value);
-                        mongoUserAPI.addGroupToUser(user._id, group);
-                        resolve(results);
-                    }
+                        var group;
+                        if (err) {
+                            reject(err);
+                        } else {
+                            group = apiUtil.createGroupSnapshot(results.value);
+                            mongoUserAPI.addGroupToUser(user._id, group);
+                            resolve(results);
+                        }
                 });
             }
         });

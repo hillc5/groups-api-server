@@ -38,6 +38,8 @@ var groupAPI = {
                 ownerId: req.body.ownerId,
                 users: [],
                 events: [],
+                tags: [],
+                posts: [],
                 creationDate: new Date()
             };
 
@@ -105,9 +107,7 @@ var groupAPI = {
     },
 
     addUserToGroup: function addUserToGroup(req, res) {
-        var user,
-            requestUser,
-            errors;
+        var errors;
 
         req.sanitize('id').trim();
         req.sanitize('user.name').trim();
@@ -115,32 +115,17 @@ var groupAPI = {
         req.sanitize('user.email').trim();
 
         req.checkBody({
-            'id': {
+            'groupId': {
                 notEmpty: true,
                 isMongoId: {
                     errorMessage: 'id must be a valid Mongo ObjectId'
                 }
             },
 
-            'user': {
-                notEmpty: true
-            },
-
-            'user.name': {
-                notEmpty: true
-            },
-
-            'user._id': {
+            'userId': {
                 notEmpty: true,
                 isMongoId: {
                     errorMessage: 'user._id must be a valid Mongo ObjectId'
-                }
-            },
-
-            'user.email': {
-                notEmpty: true,
-                isEmail: {
-                    errorMessage: 'email must be a valid email address'
                 }
             }
         });
@@ -150,9 +135,10 @@ var groupAPI = {
         if (errors) {
             res.status(400).send(errors);
         } else {
-            requestUser = req.body.user;
-            user = mongoAPI.createUserSnapshot(requestUser);
-            mongoAPI.addUserToGroup(req.body.id, user).then(function(result) {
+            mongoAPI.getUserById(req.body.userId).then(function(user) {
+                var userSnapshot = mongoAPI.createUserSnapshot(user);
+                return mongoAPI.addUserToGroup(req.body.groupId, userSnapshot);
+            }).then(function(result) {
                 res.status(200).send(result);
             }).catch(function(error) {
                 res.status(404).send(error);
