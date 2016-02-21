@@ -1,7 +1,9 @@
 var Promise = require('es6-promise').Promise,
     ObjectId = require('mongodb').ObjectId,
     bcrypt = require('bcrypt'),
+    jwt = require('jsonwebtoken'),
     uuid = require('node-uuid'),
+    auth_config = require('../config/auth'),
     SLT_FCTR = 14;
 
 var db = null;
@@ -29,6 +31,19 @@ function encrypt(phrase) {
     return promise;
 }
 
+function getJWTToken(id, secret) {
+    var tokenHeader = {
+            id: id,
+            serverSignature: auth_config.signature
+        },
+        options = {
+            expiresIn: auth_config.tokenExpires
+        };
+
+    return jwt.sign(tokenHeader, secret, options);
+
+}
+
 var authAPI = {
 
     setDBConnection: function setDBConnection(connection) {
@@ -47,12 +62,20 @@ var authAPI = {
                     reject("User already exists with " + email);
                 } else {
                     encrypt(password).then(function(hash) {
-                        var signature = uuid.v4();
-                        authCollection.insert({ email: email, password: hash, signature: signature }, function(err) {
+                        var signature = uuid.v4(),
+                            authUser = {
+                                email: email,
+                                password: hash,
+                                signature: signature
+                            };
+                        authCollection.insert(authUser, function(err, result) {
+                            var token;
+
                             if (err) {
                                 reject(err);
                             } else {
-                                resolve('SUCCESS');
+                                token = getJWTToken(result.ops[0]._id, signature);
+                                resolve(token);
                             }
                         });
                     }).catch(function(error) {
@@ -60,7 +83,6 @@ var authAPI = {
                     });
                 }
             });
-
 
         });
 
@@ -80,12 +102,14 @@ var authAPI = {
                     reject('There is no user with that email address');
                 } else {
                     bcrypt.compare(password, result[0].password, function(err, result) {
+                        var token;
                         if (err) {
                             reject(err);
                         } else if (result === false) {
                             reject('Incorrect Password');
                         } else {
-                            resolve({ id: id, signature: signature });
+                            token = getJWTToken(id, signature);
+                            resolve(token);
                         }
                     })
                 }

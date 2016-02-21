@@ -25,9 +25,8 @@ var authAPI = {
         if (errors) {
             res.status(400).send(errors);
         } else {
-            mongoAPI.validateUser(req.body.email, req.body.password).then(function(result) {
-                var token = jwt.sign({ id: result.id, serverSignature: auth_config.signature }, result.signature, { expiresIn: auth_config.tokenExpires });
-                res.status(200).send({ success: true, token: token });
+            mongoAPI.validateUser(req.body.email, req.body.password).then(function(authToken) {
+                res.status(200).send({ success: true, token: authToken });
             }).catch(function(error) {
                 res.status(401).send(error);
             })
@@ -44,7 +43,7 @@ var authAPI = {
         if (!decoded) {
             res.status(401).send({errorMessage: 'No token associated with the request'});
         } else if(decoded.serverSignature !== auth_config.signature) {
-            res.status(403).send({ errorMessage: 'Token Invalid' });
+            res.status(403).send({ errorMessage: 'Token Invalid.  Not associated with this issuer' });
         } else {
             mongoAPI.getUserSignature(decoded.id).then(function(result) {
                 jwt.verify(token, result.signature, function(err, decoded) {

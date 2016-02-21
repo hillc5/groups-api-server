@@ -61,8 +61,7 @@ var userAPI = {
     },
 
     createUser:  function createUser(req, res) {
-        var errors,
-            user;
+        var errors;
 
         req.sanitize('name').trim();
         req.sanitize('email').trim();
@@ -92,8 +91,8 @@ var userAPI = {
         if (errors) {
             res.status(400).send(errors);
         } else {
-            mongoAPI.storeUserCredentials(req.body.email, req.body.password).then(function() {
-                user = {
+            mongoAPI.storeUserCredentials(req.body.email, req.body.password).then(function(authToken) {
+                var user = {
                     name: req.body.name,
                     email: req.body.email.toLowerCase(),
                     groups: [],
@@ -102,7 +101,7 @@ var userAPI = {
                     creationDate: new Date()
                 };
                 mongoAPI.createNewUser(user).then(function(result) {
-                    res.status(201).send({ user: result });
+                    res.status(201).send({ user: result, token: authToken });
                 }, function(error) {
                     res.status(400).send({ errorMessage: error });
                 });

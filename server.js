@@ -30,6 +30,7 @@ function startAPIServer() {
     app.use(CORS(DEV_CLIENT));
 
     // AUTH APIS
+    app.post('/api/create-user', userAPI.createUser);
     app.post('/api/auth/validate-user', authAPI.validateUser);
 
     // All routes underneath this middleware will need a token sent along with
@@ -39,7 +40,6 @@ function startAPIServer() {
     // USER APIS
     app.get('/api/get-user/id/:id', userAPI.getUserById);
     app.get('/api/get-user/email/:email', userAPI.getUserByEmail);
-    app.post('/api/create-user', userAPI.createUser);
 
     // GROUP APIS
     app.get('/api/get-group/id/:id', groupAPI.getGroupById);
