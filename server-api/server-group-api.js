@@ -1,10 +1,12 @@
-var mongoAPI = require('../mongo-api');
+var mongoAPI = require('../mongo-api'),
+    apiUtil = require('../util/api-util');
 
 var groupAPI = {
 
     createGroup: function createGroup(req, res) {
         var errors,
-            group;
+            group,
+            tags;
 
         req.sanitize('name').trim();
         req.sanitize('ownerId').trim();
@@ -32,13 +34,14 @@ var groupAPI = {
         if (errors) {
             res.status(400).send(errors);
         } else {
+            tags = apiUtil.parseListString(req.body.tags);
             group = {
                 name: req.body.name,
                 public: req.body.public,
                 ownerId: req.body.ownerId,
                 users: [],
                 events: [],
-                tags: [],
+                tags: tags || [],
                 posts: [],
                 creationDate: new Date()
             };
@@ -136,7 +139,7 @@ var groupAPI = {
             res.status(400).send(errors);
         } else {
             mongoAPI.getUserById(req.body.userId).then(function(user) {
-                var userSnapshot = mongoAPI.createUserSnapshot(user);
+                var userSnapshot = apiUtil.createUserSnapshot(user);
                 return mongoAPI.addUserToGroup(req.body.groupId, userSnapshot);
             }).then(function(result) {
                 res.status(200).send(result);

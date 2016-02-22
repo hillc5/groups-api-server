@@ -1,6 +1,6 @@
 var Promise = require('es6-promise').Promise,
     mongoUserAPI = require('./mongo-user-api'),
-    apiUtil = require('./api-util'),
+    apiUtil = require('../util/api-util'),
     ObjectId = require('mongodb').ObjectId;
 
 var db = null;

@@ -1,8 +1,7 @@
 var dbAPI = require('./mongo-api/mongo-db-api'),
     authAPI = require('./mongo-api/mongo-auth-api'),
     groupAPI = require('./mongo-api/mongo-group-api'),
-    userAPI = require('./mongo-api/mongo-user-api'),
-    apiUtil = require('./mongo-api/api-util');
+    userAPI = require('./mongo-api/mongo-user-api');
 
 
 var mongoAPI = {
@@ -25,11 +24,7 @@ var mongoAPI = {
     createNewGroup: groupAPI.createNewGroup,
     getGroupById: groupAPI.getGroupById,
     getGroupsByName: groupAPI.getGroupsByName,
-    addUserToGroup: groupAPI.addUserToGroup,
-
-    // Util methods
-    createGroupSnapshot: apiUtil.createGroupSnapshot,
-    createUserSnapshot: apiUtil.createUserSnapshot
+    addUserToGroup: groupAPI.addUserToGroup
 
 };
 

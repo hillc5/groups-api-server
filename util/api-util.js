@@ -17,5 +17,16 @@ module.exports = {
             email: user.email,
             signupDate: new Date()
         }
+    },
+
+    parseListString: function parseListString(listString) {
+        function trimArrayString(item) {
+            return item.trim();
+        }
+        if (typeof listString === 'string') {
+            return listString.split(',').map(trimArrayString);
+        } else if (listString instanceof Array) {
+            return listString.map(trimArrayString)
+        }
     }
 };
