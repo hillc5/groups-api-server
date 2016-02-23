@@ -48,14 +48,14 @@ var authAPI = {
             mongoAPI.getUserSignature(decoded.id).then(function(result) {
                 jwt.verify(token, result.signature, function(err, decoded) {
                     if (err) {
-                        res.status(403).send({ errorMessage: err + ' Token invalid' });
+                        res.status(403).send({ errorMessage: 'Token Invalid: ' + err });
                     } else {
                         req.decoded = decoded;
                         next();
                     }
                 });
             }).catch(function(error) {
-                res.status(403).send({ errorMessage: error + ' Token invalid' });
+                res.status(403).send({ errorMessage: 'Token Invalid: ' + error });
             });
         }
 

@@ -54,6 +54,7 @@ function startAPIServer() {
     app.get('/api/get-group/name/:name', groupAPI.getGroupsByName);
     app.post('/api/create-group', groupAPI.createGroup);
     app.put('/api/update-group/add-user', groupAPI.addUserToGroup);
+    app.put('/api/update-group/remove-user', groupAPI.removeUserFromGroup);
 
     app.listen(PORT);
     console.log("Server Listening on " + PORT + '...');

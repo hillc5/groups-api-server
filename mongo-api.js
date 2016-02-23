@@ -24,7 +24,8 @@ var mongoAPI = {
     createNewGroup: groupAPI.createNewGroup,
     getGroupById: groupAPI.getGroupById,
     getGroupsByName: groupAPI.getGroupsByName,
-    addUserToGroup: groupAPI.addUserToGroup
+    addUserToGroup: groupAPI.addUserToGroup,
+    removeUserFromGroup: groupAPI.removeUserFromGroup
 
 };
 

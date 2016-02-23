@@ -112,10 +112,8 @@ var groupAPI = {
     addUserToGroup: function addUserToGroup(req, res) {
         var errors;
 
-        req.sanitize('id').trim();
-        req.sanitize('user.name').trim();
-        req.sanitize('user._id').trim();
-        req.sanitize('user.email').trim();
+        req.sanitize('groupId').trim();
+        req.sanitize('userId').trim();
 
         req.checkBody({
             'groupId': {
@@ -147,6 +145,42 @@ var groupAPI = {
                 res.status(404).send(error);
             });
         }
+    },
+
+    removeUserFromGroup: function removeUserFromGroup(req, res) {
+        var errors;
+
+        req.sanitize('groupId').trim();
+        req.sanitize('userId').trim();
+
+        req.checkBody({
+            'groupId': {
+                notEmpty: true,
+                isMongoId: {
+                    errorMessage: 'groupId must be a valid Mongo ObjectId'
+                }
+            },
+
+            'userId': {
+                notEmpty: true,
+                isMongoId: {
+                    errorMessage: 'groupId must be a valid Mongo ObjectId'
+                }
+            }
+        });
+
+        errors = req.validationErrors();
+
+        if (errors) {
+            res.status(400).send(errors);
+        } else {
+            mongoAPI.removeUserFromGroup(req.body.groupId, req.body.userId).then(function(result) {
+                res.status(201).send(result);
+            }).catch(function(error) {
+                res.status(404).send(error);
+            });
+        }
+
     }
 
 };

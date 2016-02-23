@@ -110,11 +110,41 @@ var groupAPI = {
                         var group;
                         if (err) {
                             reject(err);
+                        } else if (!results.value) {
+                            reject('There is no group with id, ' + groupId);
                         } else {
                             group = apiUtil.createGroupSnapshot(results.value);
                             mongoUserAPI.addGroupToUser(user._id, group);
                             resolve(results);
                         }
+                });
+            }
+        });
+
+        return promise;
+    },
+
+    removeUserFromGroup: function removeUserFromGroup(groupId, userId) {
+
+        var promise = new Promise(function(resolve, reject) {
+            if (!db) {
+                reject(NO_CONN_ERROR);
+            } else {
+                groupCollection.findOne({ _id: ObjectId(groupId) }).then(function(result) {
+                    if (result.ownerId === userId) {
+                        reject('Cannot remove owner of the group');
+                    } else {
+                        return mongoUserAPI.removeGroupFromUser(userId, groupId);
+                    }
+                }).then(function() {
+                    return groupCollection.findOneAndUpdate(
+                        { _id: ObjectId(groupId) },
+                        { $pull: { users: { _id: ObjectId(userId) }}},
+                        { returnOriginal: false });
+                }).then(function(result) {
+                    resolve(result);
+                }).catch(function(error) {
+                    reject(error);
                 });
             }
         });

@@ -103,6 +103,27 @@ var userAPI = {
         });
 
         return promise;
+    },
+
+    removeGroupFromUser: function removeGroupFromUser(userId, groupId) {
+
+        var promise = new Promise(function(resolve, reject) {
+            if(!db) {
+                reject(NO_CONN_ERROR);
+            } else {
+                userCollection.findOneAndUpdate(
+                    { _id: ObjectId(userId) },
+                    { $pull: { groups: { _id: ObjectId(groupId) }}},
+                    { returnOriginal: false }
+                ).then(function(result) {
+                    resolve(result);
+                }).catch(function(error) {
+                    reject(error);
+                });
+            }
+        });
+
+        return promise;
     }
 };
 
