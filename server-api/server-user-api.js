@@ -3,7 +3,8 @@ var mongoAPI = require('../mongo-api');
 var userAPI = {
 
     createUser:  function createUser(req, res) {
-        var errors;
+        var errors,
+            authToken;
 
         req.sanitize('name').trim();
         req.sanitize('email').trim();
@@ -33,7 +34,7 @@ var userAPI = {
         if (errors) {
             res.status(400).send(errors);
         } else {
-            mongoAPI.storeUserCredentials(req.body.email, req.body.password).then(function(authToken) {
+            mongoAPI.storeUserCredentials(req.body.email, req.body.password).then(function(token) {
                 var user = {
                     name: req.body.name,
                     email: req.body.email.toLowerCase(),
@@ -42,6 +43,8 @@ var userAPI = {
                     events: [],
                     creationDate: new Date()
                 };
+
+                authToken = token;
                 return mongoAPI.createNewUser(user);
             }).then(function(result) {
                 res.status(201).send({ user: result, token: authToken });
@@ -75,7 +78,7 @@ var userAPI = {
             mongoAPI.getUserById(search).then(function(user) {
                 res.status(200).send(user);
             }, function() {
-                res.status(404).send({ errorMessage: 'No user for ' + req.params.id })
+                res.status(404).send({ errorMessage: 'No user for ' + req.params.id });
             });
         }
     },

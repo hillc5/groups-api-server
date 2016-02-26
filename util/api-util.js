@@ -16,7 +16,7 @@ module.exports = {
             name: user.name,
             email: user.email,
             signupDate: new Date()
-        }
+        };
     },
 
     parseListString: function parseListString(listString) {
@@ -26,7 +26,7 @@ module.exports = {
         if (typeof listString === 'string') {
             return listString.split(',').map(trimArrayString);
         } else if (listString instanceof Array) {
-            return listString.map(trimArrayString)
+            return listString.map(trimArrayString);
         }
     }
 };

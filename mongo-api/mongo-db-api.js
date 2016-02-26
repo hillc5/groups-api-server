@@ -1,4 +1,5 @@
 var mongo = require('mongodb').MongoClient,
+    Promise = require('es6-promise').Promise,
     authAPI = require('./mongo-auth-api'),
     userAPI = require('./mongo-user-api'),
     groupAPI = require('./mongo-group-api');

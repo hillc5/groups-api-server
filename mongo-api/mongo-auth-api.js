@@ -3,8 +3,7 @@ var Promise = require('es6-promise').Promise,
     bcrypt = require('bcrypt'),
     jwt = require('jsonwebtoken'),
     uuid = require('node-uuid'),
-    auth_config = require('../config/auth'),
-    SLT_FCTR = 14;
+    config = require('../config/config');
 
 var db = null;
 var authCollection = null;
@@ -12,8 +11,7 @@ var authCollection = null;
 function encrypt(phrase) {
 
     var promise = new Promise(function(resolve, reject) {
-
-        bcrypt.genSalt(SLT_FCTR, function(err, salt) {
+        bcrypt.genSalt(config.saltFactor, function(err, salt) {
             if (err) {
                 reject(err);
             } else {
@@ -25,7 +23,7 @@ function encrypt(phrase) {
                     }
                 });
             }
-        })
+        });
     });
 
     return promise;
@@ -34,10 +32,10 @@ function encrypt(phrase) {
 function getJWTToken(id, secret) {
     var tokenHeader = {
             id: id,
-            serverSignature: auth_config.signature
+            serverSignature: config.signature
         },
         options = {
-            expiresIn: auth_config.tokenExpires
+            expiresIn: config.tokenExpires
         };
 
     return jwt.sign(tokenHeader, secret, options);
@@ -59,7 +57,7 @@ var authAPI = {
                 if (err) {
                     reject(err);
                 } else if (result.length !== 0) {
-                    reject("User already exists with " + email);
+                    reject('User already exists with ' + email);
                 } else {
                     encrypt(password).then(function(hash) {
                         var signature = uuid.v4(),
@@ -112,7 +110,7 @@ var authAPI = {
                             token = getJWTToken(id, signature);
                             resolve(token);
                         }
-                    })
+                    });
                 }
             });
         });

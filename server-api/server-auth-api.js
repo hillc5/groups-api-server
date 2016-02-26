@@ -29,7 +29,7 @@ var authAPI = {
                 res.status(200).send({ success: true, token: authToken });
             }).catch(function(error) {
                 res.status(401).send(error);
-            })
+            });
         }
     },
 

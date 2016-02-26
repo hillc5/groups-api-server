@@ -1,5 +1,6 @@
 var express = require('express'),
     connectToMongo = require('./mongo-api.js').connect,
+    config = require('./config/config'),
 
     authAPI = require('./server-api/server-auth-api'),
     userAPI = require('./server-api/server-user-api'),
@@ -12,9 +13,6 @@ var express = require('express'),
 
     app = express();
 
-var PORT = process.env.PORT;
-var DEV_CLIENT = { origin: 'http://localhost:' + PORT };
-
 function startAPIServer() {
     console.log('Now Starting Server...');
 
@@ -23,13 +21,13 @@ function startAPIServer() {
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({ extended: true }));
 
-    app.use(morgan(process.env.LOG_FMT));
+    app.use(morgan(config.logFormat));
 
     // validator puts validation and sanitization methods on the req object
     app.use(validator());
 
     // cors allows the handling of Cross-Origin-Resource-Sharing
-    app.use(CORS(DEV_CLIENT));
+    app.use(CORS(config.client));
 
     app.use(function(req, res, next) {
         var cluster = require('cluster');
@@ -58,8 +56,8 @@ function startAPIServer() {
     app.put('/api/update-group/add-user', groupAPI.addUserToGroup);
     app.put('/api/update-group/remove-user', groupAPI.removeUserFromGroup);
 
-    app.listen(PORT);
-    console.log("Server Listening on " + PORT + '...');
+    app.listen(config.port);
+    console.log('Server Listening on ' + config.port + '...');
 }
 
 function start() {

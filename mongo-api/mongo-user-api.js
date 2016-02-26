@@ -24,7 +24,7 @@ var userAPI = {
                     if (err) {
                         reject(err);
                     } else if (result.length != 0) {
-                        reject("User already exists with " + user.email);
+                        reject('User already exists with ' + user.email);
                     } else {
                         userCollection.insert(user, function(err, result) {
                             if (err) {
@@ -51,7 +51,7 @@ var userAPI = {
                     if (err) {
                         reject(err);
                     } else if (result.length === 0) {
-                        reject("There is no user with that id");
+                        reject('There is no user with that id');
                     } else {
                         resolve(result[0]);
                     }
@@ -72,7 +72,7 @@ var userAPI = {
                     if (err) {
                         reject(err);
                     } else if( result.length === 0) {
-                        reject("There is no user with that email address");
+                        reject('There is no user with that email address');
                     } else {
                         resolve(result[0]);
                     }

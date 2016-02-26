@@ -164,7 +164,7 @@ var groupAPI = {
                 if (error && error.message) {
                     error = {
                         errorMessage: error.message
-                    }
+                    };
                 }
                 res.status(404).send(error);
             });
@@ -215,7 +215,7 @@ var groupAPI = {
                 if (error && error.message) {
                     error = {
                         errorMessage: error.message
-                    }
+                    };
                 }
                 res.status(404).send(error);
             });

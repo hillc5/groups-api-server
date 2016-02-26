@@ -1,6 +1,4 @@
 var Promise = require('es6-promise').Promise,
-    mongoUserAPI = require('./mongo-user-api'),
-    apiUtil = require('../util/api-util'),
     ObjectId = require('mongodb').ObjectId;
 
 var db = null;
@@ -67,7 +65,7 @@ var groupAPI = {
                     if (err) {
                         reject(err);
                     } else if (result.length === 0) {
-                        reject("No Group found");
+                        reject('No Group found');
                     } else {
                         resolve(result);
                     }
@@ -98,7 +96,7 @@ var groupAPI = {
                         } else {
                             resolve(results.value);
                         }
-                });
+                    });
             }
         });
 
