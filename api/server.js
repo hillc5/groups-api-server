@@ -1,11 +1,11 @@
 var express = require('express'),
     connectToMongo = require('./mongo-api.js').connect,
-    config = require('./api/config/config'),
-    log = require('./api/util/api-util').Logger,
+    config = require('./config/config'),
+    log = require('./util/api-util').Logger,
 
-    authAPI = require('./api/server-api/server-auth-api'),
-    userAPI = require('./api/server-api/server-user-api'),
-    groupAPI = require('./api/server-api/server-group-api'),
+    authAPI = require('./server-api/server-auth-api'),
+    userAPI = require('./server-api/server-user-api'),
+    groupAPI = require('./server-api/server-group-api'),
 
     CORS = require('cors'),
     bodyParser = require('body-parser'),
@@ -62,7 +62,7 @@ function startAPIServer() {
 }
 
 function start() {
-    connectToMongo().then(startAPIServer, console.error);
+    connectToMongo().then(startAPIServer, log.error);
 }
 
 if (require.main === module) {

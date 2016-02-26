@@ -1,5 +1,5 @@
 var cluster = require('cluster'),
-    log = require('./api/util/api-util').Logger,
+    log = require('./util/api-util').Logger,
     start;
 
 function startWorker() {

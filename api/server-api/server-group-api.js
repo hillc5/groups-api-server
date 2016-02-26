@@ -1,4 +1,4 @@
-var mongoAPI = require('../../mongo-api'),
+var mongoAPI = require('../mongo-api'),
     apiUtil = require('../util/api-util');
 
 var groupAPI = {
