@@ -1,9 +1,10 @@
 var cluster = require('cluster'),
+    log = require('./api/util/api-util').Logger,
     start;
 
 function startWorker() {
     var worker = cluster.fork();
-    console.log('CLUSTER: Worker %d started', worker.id);
+    log.info('CLUSTER: Worker %d started', worker.id);
 }
 
 if (cluster.isMaster) {
@@ -13,11 +14,11 @@ if (cluster.isMaster) {
     });
 
     cluster.on('disconnect', function(worker) {
-        console.log('CLUSTER: Worker %d disconnected from the cluster.', worker.id);
+        log.info('CLUSTER: Worker %d disconnected from the cluster.', worker.id);
     });
 
     cluster.on('exit', function(worker, code, signal) {
-        console.log('CLUSTER: Worker %d died with exit code %d (%s)', worker.id, code, signal);
+        log.info('CLUSTER: Worker %d died with exit code %d (%s)', worker.id, code, signal);
         startWorker();
     });
 

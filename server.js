@@ -1,10 +1,11 @@
 var express = require('express'),
     connectToMongo = require('./mongo-api.js').connect,
-    config = require('./config/config'),
+    config = require('./api/config/config'),
+    log = require('./api/util/api-util').Logger,
 
-    authAPI = require('./server-api/server-auth-api'),
-    userAPI = require('./server-api/server-user-api'),
-    groupAPI = require('./server-api/server-group-api'),
+    authAPI = require('./api/server-api/server-auth-api'),
+    userAPI = require('./api/server-api/server-user-api'),
+    groupAPI = require('./api/server-api/server-group-api'),
 
     CORS = require('cors'),
     bodyParser = require('body-parser'),
@@ -14,7 +15,7 @@ var express = require('express'),
     app = express();
 
 function startAPIServer() {
-    console.log('Now Starting Server...');
+    log.info('Now Starting Server...');
 
     // body parser parses body and url params and places them on the req
     // object as simple attributes
@@ -32,7 +33,7 @@ function startAPIServer() {
     app.use(function(req, res, next) {
         var cluster = require('cluster');
         if(cluster.isWorker) {
-            console.log('Worker %d received request', cluster.worker.id);
+            log.info('Worker %d received request', cluster.worker.id);
         }
         next();
     });
@@ -57,7 +58,7 @@ function startAPIServer() {
     app.put('/api/update-group/remove-user', groupAPI.removeUserFromGroup);
 
     app.listen(config.port);
-    console.log('Server Listening on ' + config.port + '...');
+    log.info('Server Listening on ' + config.port + '...');
 }
 
 function start() {

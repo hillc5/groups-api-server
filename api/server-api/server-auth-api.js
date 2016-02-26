@@ -1,6 +1,6 @@
-var mongoAPI = require('../mongo-api'),
+var mongoAPI = require('../../mongo-api'),
     jwt = require('jsonwebtoken'),
-    auth_config = require('../config/auth');
+    config = require('../config/config');
 
 var authAPI = {
 
@@ -42,7 +42,7 @@ var authAPI = {
 
         if (!decoded) {
             res.status(401).send({errorMessage: 'No token associated with the request'});
-        } else if(decoded.serverSignature !== auth_config.signature) {
+        } else if(decoded.serverSignature !== config.signature) {
             res.status(403).send({ errorMessage: 'Token Invalid.  Not associated with this issuer' });
         } else {
             mongoAPI.getUserSignature(decoded.id).then(function(result) {

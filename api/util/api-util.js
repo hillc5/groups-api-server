@@ -1,4 +1,11 @@
+var bunyan = require('bunyan');
+
 module.exports = {
+
+    Logger: bunyan.createLogger({
+        name: 'groups-api-server'
+    }),
+
     createGroupSnapshot: function createGroupSnapshot(group) {
         return {
             _id: group._id,

@@ -1,4 +1,4 @@
-var mongoAPI = require('../mongo-api');
+var mongoAPI = require('../../mongo-api');
 
 var userAPI = {
 

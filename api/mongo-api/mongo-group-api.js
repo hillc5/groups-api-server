@@ -1,5 +1,6 @@
 var Promise = require('es6-promise').Promise,
-    ObjectId = require('mongodb').ObjectId;
+    ObjectId = require('mongodb').ObjectId,
+    log = require('../util/api-util').Logger;
 
 var db = null;
 var groupCollection = null;
@@ -11,7 +12,7 @@ var groupAPI = {
     setDBConnection: function setDBConnection(connection) {
         db = connection;
         groupCollection = db.collection('groups');
-        console.log('MONGO: Group API ONLINE');
+        log.info('MONGO: Group API ONLINE');
     },
 
     createNewGroup: function createNewGroup(group) {

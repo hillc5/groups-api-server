@@ -5,8 +5,9 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "NODE_ENV=development LOG_FMT=dev PORT=8080 node server.js",
-    "dev-cluster": "NODE_ENV=development LOG_FMT=dev PORT=8080 node server_cluster.js"
+    "lint": "eslint api",
+    "dev": "npm run lint && NODE_ENV=development LOG_FMT=dev PORT=8080 node server.js | bunyan",
+    "dev-cluster": "npm run lint && NODE_ENV=development LOG_FMT=dev PORT=8080 node server_cluster.js | bunyan"
   },
   "repository": {
     "type": "git",
@@ -21,6 +22,7 @@
   "dependencies": {
     "bcrypt": "^0.8.5",
     "body-parser": "^1.14.2",
+    "bunyan": "^1.7.0",
     "cors": "^2.7.1",
     "es6-promise": "^3.0.2",
     "express": "^4.13.4",
@@ -28,6 +30,7 @@
     "jsonwebtoken": "^5.5.4",
     "kerberos": "0.0.18",
     "mongo": "^0.1.0",
+    "mongodb": "^2.1.7",
     "morgan": "^1.6.1",
     "node-uuid": "^1.4.7"
   }

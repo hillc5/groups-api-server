@@ -1,7 +1,7 @@
-var dbAPI = require('./mongo-api/mongo-db-api'),
-    authAPI = require('./mongo-api/mongo-auth-api'),
-    groupAPI = require('./mongo-api/mongo-group-api'),
-    userAPI = require('./mongo-api/mongo-user-api');
+var dbAPI = require('./api/mongo-api/mongo-db-api'),
+    authAPI = require('./api/mongo-api/mongo-auth-api'),
+    groupAPI = require('./api/mongo-api/mongo-group-api'),
+    userAPI = require('./api/mongo-api/mongo-user-api');
 
 
 var mongoAPI = {

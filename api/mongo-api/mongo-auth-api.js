@@ -3,7 +3,8 @@ var Promise = require('es6-promise').Promise,
     bcrypt = require('bcrypt'),
     jwt = require('jsonwebtoken'),
     uuid = require('node-uuid'),
-    config = require('../config/config');
+    config = require('../config/config'),
+    log = require('../util/api-util').Logger;
 
 var db = null;
 var authCollection = null;
@@ -47,7 +48,7 @@ var authAPI = {
     setDBConnection: function setDBConnection(connection) {
         db = connection;
         authCollection = db.collection('userauth');
-        console.log('MONGO: Auth API ONLINE');
+        log.info('MONGO: Auth API ONLINE');
     },
 
     storeUserCredentials: function storeUserCredentials(email, password) {

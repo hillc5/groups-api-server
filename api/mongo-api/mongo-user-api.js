@@ -1,5 +1,6 @@
 var Promise = require('es6-promise').Promise,
-    ObjectId = require('mongodb').ObjectId;
+    ObjectId = require('mongodb').ObjectId,
+    log = require('../util/api-util').Logger;
 
 var db = null;
 var userCollection = null;
@@ -11,7 +12,7 @@ var userAPI = {
     setDBConnection: function setDBConnection(connection) {
         db = connection;
         userCollection = db.collection('user');
-        console.log('MONGO: User API ONLINE');
+        log.info('MONGO: User API ONLINE');
     },
 
     createNewUser: function createNewUser(user) {
