@@ -6,6 +6,8 @@ var groupAPI = {
     createGroup: function createGroup(req, res) {
         var errors,
             group,
+            groupResult,
+            userSnapshot,
             tags;
 
         req.sanitize('name').trim();
@@ -47,8 +49,18 @@ var groupAPI = {
             };
 
             mongoAPI.createNewGroup(group).then(function(result) {
-                res.status(201).send({ group: result});
-            }, function(error) {
+                groupResult = result;
+                return mongoAPI.getUserById(groupResult.ownerId);
+            }).then(function(result) {
+                userSnapshot = apiUtil.createUserSnapshot(result);
+                return mongoAPI.addUserToGroup(groupResult._id, userSnapshot);
+            }).then(function(result) {
+                groupResult = result;
+                var groupSnapshot = apiUtil.createGroupSnapshot(result);
+                return mongoAPI.addGroupToUser(userSnapshot._id, groupSnapshot);
+            }).then(function() {
+                res.status(201).send({ group: groupResult });
+            }).catch(function(error) {
                 res.status(400).send({ errorMessage: error });
             });
         }
@@ -137,18 +149,32 @@ var groupAPI = {
             res.status(400).send(errors);
         } else {
             mongoAPI.getUserById(req.body.userId).then(function(user) {
+                var userInGroup = user.groups.some(function(group) {
+                    return group._id.equals(req.body.groupId);
+                });
+
+                if (userInGroup) {
+                    throw new Error('User is already in this group');
+                }
                 var userSnapshot = apiUtil.createUserSnapshot(user);
                 return mongoAPI.addUserToGroup(req.body.groupId, userSnapshot);
             }).then(function(result) {
                 res.status(200).send(result);
             }).catch(function(error) {
+                if (error && error.message) {
+                    error = {
+                        errorMessage: error.message
+                    }
+                }
                 res.status(404).send(error);
             });
         }
     },
 
     removeUserFromGroup: function removeUserFromGroup(req, res) {
-        var errors;
+        var errors,
+            updatedGroup,
+            groupId;
 
         req.sanitize('groupId').trim();
         req.sanitize('userId').trim();
@@ -174,9 +200,23 @@ var groupAPI = {
         if (errors) {
             res.status(400).send(errors);
         } else {
-            mongoAPI.removeUserFromGroup(req.body.groupId, req.body.userId).then(function(result) {
-                res.status(201).send(result);
+            groupId = req.body.groupId;
+            mongoAPI.getGroupById(groupId).then(function(result) {
+                if (result.ownerId === req.body.userId) {
+                    throw new Error('Cannot remove owner of the group');
+                }
+                return mongoAPI.removeUserFromGroup(groupId, req.body.userId);
+            }).then(function(result) {
+                updatedGroup = result;
+                return mongoAPI.removeGroupFromUser(req.body.userId, groupId);
+            }).then(function() {
+                res.status(200).send(updatedGroup);
             }).catch(function(error) {
+                if (error && error.message) {
+                    error = {
+                        errorMessage: error.message
+                    }
+                }
                 res.status(404).send(error);
             });
         }

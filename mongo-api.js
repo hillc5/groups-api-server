@@ -15,10 +15,11 @@ var mongoAPI = {
     getUserSignature: authAPI.getUserSignature,
 
     // Mongo User Collection API methods
+    createNewUser: userAPI.createNewUser,
     getUserById: userAPI.getUserById,
     getUserByEmail: userAPI.getUserByEmail,
-    createNewUser: userAPI.createNewUser,
     addGroupToUser: userAPI.addGroupToUser,
+    removeGroupFromUser: userAPI.removeGroupFromUser,
 
     // Mongo Group Collection API methods
     createNewGroup: groupAPI.createNewGroup,

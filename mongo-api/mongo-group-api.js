@@ -19,33 +19,17 @@ var groupAPI = {
     createNewGroup: function createNewGroup(group) {
 
         var promise = new Promise(function(resolve, reject) {
-            var groupSnapshot,
-                newGroup;
-
             if (!db) {
                 reject(NO_CONN_ERROR);
             } else {
-                mongoUserAPI.getUserById(group.ownerId).then(function(result) {
-                    var user = apiUtil.createUserSnapshot(result);
-                    group.users.push(user);
-                    // TODO disallow same name and owner for any new group
-                    groupCollection.insert(group, function(err, result) {
-                        if (err) {
-                            reject(err);
-                        } else {
-                            newGroup = result.ops[0];
-                            // Adding group to creator's groups array
-                            groupSnapshot = apiUtil.createGroupSnapshot(newGroup);
-                            mongoUserAPI.addGroupToUser(group.ownerId, groupSnapshot);
-
-                            resolve(newGroup);
-                        }
-                    });
-                }, function() {
-                    reject("No User found for ownerId: " + group.ownerId);
-                })
+                groupCollection.insert(group, function(err, result) {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(result.ops[0]);
+                    }
+                });
             }
-
         });
 
         return promise;
@@ -107,15 +91,12 @@ var groupAPI = {
                     { $push: { users: user } },
                     { new: true },
                     function(err, results) {
-                        var group;
                         if (err) {
                             reject(err);
                         } else if (!results.value) {
                             reject('There is no group with id, ' + groupId);
                         } else {
-                            group = apiUtil.createGroupSnapshot(results.value);
-                            mongoUserAPI.addGroupToUser(user._id, group);
-                            resolve(results);
+                            resolve(results.value);
                         }
                 });
             }
@@ -130,18 +111,11 @@ var groupAPI = {
             if (!db) {
                 reject(NO_CONN_ERROR);
             } else {
-                groupCollection.findOne({ _id: ObjectId(groupId) }).then(function(result) {
-                    if (result.ownerId === userId) {
-                        reject('Cannot remove owner of the group');
-                    } else {
-                        return mongoUserAPI.removeGroupFromUser(userId, groupId);
-                    }
-                }).then(function() {
-                    return groupCollection.findOneAndUpdate(
-                        { _id: ObjectId(groupId) },
-                        { $pull: { users: { _id: ObjectId(userId) }}},
-                        { returnOriginal: false });
-                }).then(function(result) {
+                groupCollection.findOneAndUpdate(
+                    { _id: ObjectId(groupId) },
+                    { $pull: { users: { _id: ObjectId(userId) }}},
+                    { returnOriginal: false })
+                .then(function(result) {
                     resolve(result);
                 }).catch(function(error) {
                     reject(error);

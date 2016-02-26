@@ -2,6 +2,55 @@ var mongoAPI = require('../mongo-api');
 
 var userAPI = {
 
+    createUser:  function createUser(req, res) {
+        var errors;
+
+        req.sanitize('name').trim();
+        req.sanitize('email').trim();
+
+        req.checkBody({
+            'name': {
+                notEmpty: true,
+                isAscii: {
+                    errorMessage: 'Name must be valid ascii characters'
+                }
+            },
+
+            'email': {
+                notEmpty: true,
+                isEmail: {
+                    errorMessage: 'Invalid email format'
+                }
+            },
+
+            'password': {
+                notEmpty: true
+            }
+        });
+
+        errors = req.validationErrors();
+
+        if (errors) {
+            res.status(400).send(errors);
+        } else {
+            mongoAPI.storeUserCredentials(req.body.email, req.body.password).then(function(authToken) {
+                var user = {
+                    name: req.body.name,
+                    email: req.body.email.toLowerCase(),
+                    groups: [],
+                    posts: [],
+                    events: [],
+                    creationDate: new Date()
+                };
+                return mongoAPI.createNewUser(user);
+            }).then(function(result) {
+                res.status(201).send({ user: result, token: authToken });
+            }).catch(function(error) {
+                res.status(400).send({ errorMessage: error });
+            });
+        }
+    },
+
     getUserById: function getUserById(req, res) {
         var search,
             errors;
@@ -58,58 +107,8 @@ var userAPI = {
                 res.status(404).send({ errorMessage: 'No user for ' + req.params.email });
             });
         }
-    },
-
-    createUser:  function createUser(req, res) {
-        var errors;
-
-        req.sanitize('name').trim();
-        req.sanitize('email').trim();
-
-        req.checkBody({
-            'name': {
-                notEmpty: true,
-                isAscii: {
-                    errorMessage: 'Name must be valid ascii characters'
-                }
-            },
-
-            'email': {
-                notEmpty: true,
-                isEmail: {
-                    errorMessage: 'Invalid email format'
-                }
-            },
-
-            'password': {
-                notEmpty: true
-            }
-        });
-
-        errors = req.validationErrors();
-
-        if (errors) {
-            res.status(400).send(errors);
-        } else {
-            mongoAPI.storeUserCredentials(req.body.email, req.body.password).then(function(authToken) {
-                var user = {
-                    name: req.body.name,
-                    email: req.body.email.toLowerCase(),
-                    groups: [],
-                    posts: [],
-                    events: [],
-                    creationDate: new Date()
-                };
-                mongoAPI.createNewUser(user).then(function(result) {
-                    res.status(201).send({ user: result, token: authToken });
-                }, function(error) {
-                    res.status(400).send({ errorMessage: error });
-                });
-            }).catch(function(error) {
-                res.status(400).send({ errorMessage: error });
-            })
-        }
     }
+
 };
 
 module.exports = userAPI;

@@ -1,5 +1,6 @@
 var express = require('express'),
     connectToMongo = require('./mongo-api.js').connect,
+
     authAPI = require('./server-api/server-auth-api'),
     userAPI = require('./server-api/server-user-api'),
     groupAPI = require('./server-api/server-group-api'),
@@ -8,6 +9,7 @@ var express = require('express'),
     bodyParser = require('body-parser'),
     validator = require('express-validator'),
     morgan = require('morgan'),
+
     app = express();
 
 var PORT = process.env.PORT;
@@ -33,7 +35,7 @@ function startAPIServer() {
         var cluster = require('cluster');
         if(cluster.isWorker) {
             console.log('Worker %d received request', cluster.worker.id);
-        };
+        }
         next();
     });
 
@@ -61,7 +63,7 @@ function startAPIServer() {
 }
 
 function start() {
-    connectToMongo().then(startAPIServer, console.err);
+    connectToMongo().then(startAPIServer, console.error);
 }
 
 if (require.main = module) {

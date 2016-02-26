@@ -18,7 +18,7 @@ var utilAPI = {
             } else {
                 mongo.connect(DB_CONFIG.url, function(err, database) {
                     if (err) {
-                        console.err('ERROR connecting to', DB_CONFIG.url);
+                        console.error('ERROR connecting to', DB_CONFIG.url);
                         reject(err);
                     } else {
                         db = database;
