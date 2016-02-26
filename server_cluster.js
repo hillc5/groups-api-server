@@ -1,4 +1,5 @@
-var cluster = require('cluster');
+var cluster = require('cluster'),
+    start;
 
 function startWorker() {
     var worker = cluster.fork();
@@ -21,6 +22,6 @@ if (cluster.isMaster) {
     });
 
 } else {
-    // starts the server
-    require('./server');
+    start = require('./server');
+    start(); // for clarity
 }

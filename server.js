@@ -66,6 +66,8 @@ function start() {
     connectToMongo().then(startAPIServer, console.error);
 }
 
-if (require.main = module) {
+if (require.main === module) {
     start();
+} else {
+    module.exports = start;
 }
