@@ -6,6 +6,18 @@ module.exports = {
         name: 'groups-api-server'
     }),
 
+    createDefaultUser: function(name, email) {
+        return {
+            name: name,
+            email: email.toLowerCase(),
+            groups: [],
+            posts: [],
+            events: [],
+            creationDate: new Date()
+        };
+    },
+
+
     createGroupSnapshot: function createGroupSnapshot(group) {
         return {
             _id: group._id,

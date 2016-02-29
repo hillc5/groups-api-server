@@ -1,10 +1,11 @@
 var mongoAPI = require('../mongo-api');
 
+var userService = require('../services/user-service');
+
 var userAPI = {
 
     createUser:  function createUser(req, res) {
-        var errors,
-            authToken;
+        var errors;
 
         req.sanitize('name').trim();
         req.sanitize('email').trim();
@@ -34,22 +35,11 @@ var userAPI = {
         if (errors) {
             res.status(400).send(errors);
         } else {
-            mongoAPI.storeUserCredentials(req.body.email, req.body.password).then(function(token) {
-                var user = {
-                    name: req.body.name,
-                    email: req.body.email.toLowerCase(),
-                    groups: [],
-                    posts: [],
-                    events: [],
-                    creationDate: new Date()
-                };
-
-                authToken = token;
-                return mongoAPI.createNewUser(user);
-            }).then(function(result) {
-                res.status(201).send({ user: result, token: authToken });
+            userService.createNewUser(req.body.name, req.body.email, req.body.password)
+            .then(function(result) {
+                res.status(201).send(result);
             }).catch(function(error) {
-                res.status(400).send({ errorMessage: error });
+                res.status(error.status).send({ errorMessage: error.errorMessage });
             });
         }
     },
