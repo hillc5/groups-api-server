@@ -1,5 +1,3 @@
-var mongoAPI = require('../mongo-api');
-
 var userService = require('../services/user-service');
 
 var userAPI = {
@@ -65,10 +63,10 @@ var userAPI = {
             res.status(400).send(errors);
         } else {
             search = req.params.id;
-            mongoAPI.getUserById(search).then(function(user) {
+            userService.getUserById(search).then(function(user) {
                 res.status(200).send(user);
-            }, function() {
-                res.status(404).send({ errorMessage: 'No user for ' + req.params.id });
+            }, function(error) {
+                res.status(error.status).send({ errorMessage: error.errorMessage });
             });
         }
     },
@@ -94,10 +92,10 @@ var userAPI = {
             res.status(400).send(errors);
         } else {
             email = req.params.email.toLowerCase();
-            mongoAPI.getUserByEmail(email).then(function(user) {
+            userService.getUserByEmail(email).then(function(user) {
                 res.status(200).send(user);
-            }, function() {
-                res.status(404).send({ errorMessage: 'No user for ' + req.params.email });
+            }, function(error) {
+                res.status(error.status).send({ errorMessage: error.errorMessage });
             });
         }
     }

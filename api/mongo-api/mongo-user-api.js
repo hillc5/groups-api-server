@@ -9,7 +9,7 @@ var NO_CONN_ERROR = 'ERROR. No Connection';
 
 var userAPI = {
 
-    setDBConnection: function setDBConnection(connection) {
+    setDBConnection: function(connection) {
         db = connection;
         userCollection = db.collection('user');
         log.info('MONGO: User API ONLINE');
@@ -26,8 +26,8 @@ var userAPI = {
                         log.error(err);
                         reject(err);
                     } else {
-                        log.info('MONGO: New User inserted into db:',result.ops[0]._id);
-                        resolve(result.ops[0]);
+                        log.info('MONGO: New User inserted into db:', result.ops[0]._id);
+                        resolve(result);
                     }
                 });
             }
@@ -36,20 +36,18 @@ var userAPI = {
         return promise;
     },
 
-    getUserById: function getUserById(id) {
+    getUserById: function(id) {
 
         var promise = new Promise(function(resolve, reject) {
             if (!db) {
                 reject(NO_CONN_ERROR);
             } else {
-                userCollection.find({ _id: ObjectId(id) }).toArray(function(err, result) {
-                    if (err) {
-                        reject(err);
-                    } else if (result.length === 0) {
-                        reject('There is no user with that id');
-                    } else {
-                        resolve(result[0]);
-                    }
+                userCollection.find({ _id: ObjectId(id) }).limit(1).next()
+                .then(function(result) {
+                    resolve(result);
+                }).catch(function(error) {
+                    log.error(error);
+                    reject(error);
                 });
             }
         });
@@ -57,7 +55,7 @@ var userAPI = {
         return promise;
     },
 
-    getUserByEmail: function getUserByEmail(email) {
+    getUserByEmail: function(email) {
 
         var promise = new Promise(function(resolve, reject) {
             if (!db) {
@@ -67,6 +65,7 @@ var userAPI = {
                 .then(function(result) {
                     resolve(result);
                 }).catch(function(error) {
+                    log.error(error);
                     reject(error);
                 });
             }
