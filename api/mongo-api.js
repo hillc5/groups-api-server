@@ -15,7 +15,7 @@ var mongoAPI = {
     getUserSignature: authAPI.getUserSignature,
 
     // Mongo User Collection API methods
-    createNewUser: userAPI.createNewUser,
+    insertNewUser: userAPI.insertNewUser,
     getUserById: userAPI.getUserById,
     getUserByEmail: userAPI.getUserByEmail,
     addGroupToUser: userAPI.addGroupToUser,

@@ -9,31 +9,25 @@ var NO_CONN_ERROR = 'ERROR. No Connection';
 
 var userAPI = {
 
-    setDBConnection: function setDBConnection(connection) {
+    setDBConnection: function(connection) {
         db = connection;
         userCollection = db.collection('user');
         log.info('MONGO: User API ONLINE');
     },
 
-    createNewUser: function createNewUser(user) {
+    insertNewUser: function(user) {
 
         var promise = new Promise(function(resolve, reject) {
             if (!db) {
                 reject('ERROR.  No Connection');
             } else {
-                userCollection.find({ email: user.email}).toArray(function(err, result) {
+                userCollection.insert(user, function(err, result) {
                     if (err) {
+                        log.error(err);
                         reject(err);
-                    } else if (result.length != 0) {
-                        reject('User already exists with ' + user.email);
                     } else {
-                        userCollection.insert(user, function(err, result) {
-                            if (err) {
-                                reject(err);
-                            } else {
-                                resolve(result.ops[0]);
-                            }
-                        });
+                        log.info('MONGO: New User inserted into db:', result.ops[0]._id);
+                        resolve(result);
                     }
                 });
             }
@@ -42,20 +36,18 @@ var userAPI = {
         return promise;
     },
 
-    getUserById: function getUserById(id) {
+    getUserById: function(id) {
 
         var promise = new Promise(function(resolve, reject) {
             if (!db) {
                 reject(NO_CONN_ERROR);
             } else {
-                userCollection.find({ _id: ObjectId(id) }).toArray(function(err, result) {
-                    if (err) {
-                        reject(err);
-                    } else if (result.length === 0) {
-                        reject('There is no user with that id');
-                    } else {
-                        resolve(result[0]);
-                    }
+                userCollection.find({ _id: ObjectId(id) }).limit(1).next()
+                .then(function(result) {
+                    resolve(result);
+                }).catch(function(error) {
+                    log.error(error);
+                    reject(error);
                 });
             }
         });
@@ -63,20 +55,18 @@ var userAPI = {
         return promise;
     },
 
-    getUserByEmail: function getUserByEmail(email) {
+    getUserByEmail: function(email) {
 
         var promise = new Promise(function(resolve, reject) {
             if (!db) {
                 reject(NO_CONN_ERROR);
             } else {
-                userCollection.find({ email: email }).toArray(function(err, result) {
-                    if (err) {
-                        reject(err);
-                    } else if( result.length === 0) {
-                        reject('There is no user with that email address');
-                    } else {
-                        resolve(result[0]);
-                    }
+                userCollection.find({ email: email }).limit(1).next()
+                .then(function(result) {
+                    resolve(result);
+                }).catch(function(error) {
+                    log.error(error);
+                    reject(error);
                 });
             }
         });
@@ -91,13 +81,14 @@ var userAPI = {
             if (!db) {
                 reject(NO_CONN_ERROR);
             } else {
-                userCollection.update({ _id: ObjectId(userId) }, { $push: { groups : group } },
-                function(err, result) {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        resolve(result);
-                    }
+                userCollection.findOneAndUpdate(
+                    { _id: ObjectId(userId) },
+                    { $push: { groups : group } },
+                    { returnOriginal: false }
+                ).then(function(result) {
+                    resolve(result);
+                }).catch(function(error) {
+                    reject(error);
                 });
             }
         });
