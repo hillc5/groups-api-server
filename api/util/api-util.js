@@ -6,6 +6,14 @@ module.exports = {
         name: 'groups-api-server'
     }),
 
+    sendError: function(error, reject) {
+        if (error.status) {
+            reject(error);
+        } else {
+            reject({ status: 500, errorMessage: error.errmsg });
+        }
+    },
+
     createDefaultUser: function(name, email) {
         return {
             name: name,
@@ -17,8 +25,21 @@ module.exports = {
         };
     },
 
+    createDefaultGroup: function(name, ownerId, isPublic, tags) {
+        return {
+            name: name,
+            public: isPublic,
+            ownerId: ownerId,
+            users: [],
+            events: [],
+            tags: tags || [],
+            posts: [],
+            creationDate: new Date()
+        };
+    },
 
-    createGroupSnapshot: function createGroupSnapshot(group) {
+
+    createGroupSnapshot: function(group) {
         return {
             _id: group._id,
             name: group.name,
@@ -29,7 +50,7 @@ module.exports = {
         };
     },
 
-    createUserSnapshot: function createUserSnapshot(user) {
+    createUserSnapshot: function(user) {
         return {
             _id: user._id,
             name: user.name,
@@ -38,7 +59,7 @@ module.exports = {
         };
     },
 
-    parseListString: function parseListString(listString) {
+    parseListString: function(listString) {
         function trimArrayString(item) {
             return item.trim();
         }

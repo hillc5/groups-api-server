@@ -45,13 +45,13 @@ function getJWTToken(id, secret) {
 
 var authAPI = {
 
-    setDBConnection: function setDBConnection(connection) {
+    setDBConnection: function(connection) {
         db = connection;
         authCollection = db.collection('userauth');
         log.info('MONGO: Auth API ONLINE');
     },
 
-    storeUserCredentials: function storeUserCredentials(email, password) {
+    storeUserCredentials: function(email, password) {
         var promise = new Promise(function(resolve, reject) {
 
             authCollection.find({ email: email }).toArray(function(err, result) {
@@ -89,7 +89,7 @@ var authAPI = {
     },
 
 
-    validateUser: function validateUser(email, password) {
+    validateUser: function(email, password) {
 
         var promise = new Promise(function(resolve, reject) {
             authCollection.find({ email: email }).toArray(function(err, result) {
@@ -119,7 +119,7 @@ var authAPI = {
         return promise;
     },
 
-    getUserSignature: function getUserSignature(id) {
+    getUserSignature: function(id) {
 
         var promise = new Promise(function(resolve, reject) {
             authCollection.find({ _id: ObjectId(id) }).toArray(function(err, results) {

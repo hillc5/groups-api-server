@@ -22,7 +22,7 @@ var mongoAPI = {
     removeGroupFromUser: userAPI.removeGroupFromUser,
 
     // Mongo Group Collection API methods
-    createNewGroup: groupAPI.createNewGroup,
+    insertNewGroup: groupAPI.insertNewGroup,
     getGroupById: groupAPI.getGroupById,
     getGroupsByName: groupAPI.getGroupsByName,
     addUserToGroup: groupAPI.addUserToGroup,

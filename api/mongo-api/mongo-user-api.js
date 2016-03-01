@@ -74,7 +74,7 @@ var userAPI = {
         return promise;
     },
 
-    addGroupToUser: function addGroupToUser(userId, group) {
+    addGroupToUser: function(userId, group) {
 
         var promise = new Promise(function(resolve, reject) {
 
@@ -96,7 +96,7 @@ var userAPI = {
         return promise;
     },
 
-    removeGroupFromUser: function removeGroupFromUser(userId, groupId) {
+    removeGroupFromUser: function(userId, groupId) {
 
         var promise = new Promise(function(resolve, reject) {
             if(!db) {

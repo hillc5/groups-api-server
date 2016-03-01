@@ -1,14 +1,12 @@
 var mongoAPI = require('../mongo-api'),
+    groupService = require('../services/group-service'),
     apiUtil = require('../util/api-util');
 
 var groupAPI = {
 
-    createGroup: function createGroup(req, res) {
+    createGroup: function(req, res) {
         var errors,
-            group,
-            groupResult,
-            userSnapshot,
-            tags;
+            body;
 
         req.sanitize('name').trim();
         req.sanitize('ownerId').trim();
@@ -36,37 +34,17 @@ var groupAPI = {
         if (errors) {
             res.status(400).send(errors);
         } else {
-            tags = apiUtil.parseListString(req.body.tags);
-            group = {
-                name: req.body.name,
-                public: req.body.public,
-                ownerId: req.body.ownerId,
-                users: [],
-                events: [],
-                tags: tags || [],
-                posts: [],
-                creationDate: new Date()
-            };
-
-            mongoAPI.createNewGroup(group).then(function(result) {
-                groupResult = result;
-                return mongoAPI.getUserById(groupResult.ownerId);
-            }).then(function(result) {
-                userSnapshot = apiUtil.createUserSnapshot(result);
-                return mongoAPI.addUserToGroup(groupResult._id, userSnapshot);
-            }).then(function(result) {
-                groupResult = result;
-                var groupSnapshot = apiUtil.createGroupSnapshot(result);
-                return mongoAPI.addGroupToUser(userSnapshot._id, groupSnapshot);
-            }).then(function() {
-                res.status(201).send({ group: groupResult });
+            body = req.body;
+            groupService.createNewGroup(body.name, body.ownerId, body.public, body.tags)
+            .then(function(result) {
+                res.status(201).send(result);
             }).catch(function(error) {
-                res.status(400).send({ errorMessage: error });
+                res.status(error.status).send({ errorMessage: error.errorMessage });
             });
         }
     },
 
-    getGroupById: function getGroupById(req, res) {
+    getGroupById: function(req, res) {
         var errors;
 
         req.sanitize('id').trim();
@@ -94,7 +72,7 @@ var groupAPI = {
 
     },
 
-    getGroupsByName: function getGroupsByName(req, res) {
+    getGroupsByName: function(req, res) {
         var name,
             errors;
 
@@ -121,7 +99,7 @@ var groupAPI = {
         }
     },
 
-    addUserToGroup: function addUserToGroup(req, res) {
+    addUserToGroup: function(req, res) {
         var errors;
 
         req.sanitize('groupId').trim();
@@ -171,7 +149,7 @@ var groupAPI = {
         }
     },
 
-    removeUserFromGroup: function removeUserFromGroup(req, res) {
+    removeUserFromGroup: function(req, res) {
         var errors,
             updatedGroup,
             groupId;

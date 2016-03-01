@@ -2,7 +2,7 @@ var userService = require('../services/user-service');
 
 var userAPI = {
 
-    createUser:  function createUser(req, res) {
+    createUser:  function(req, res) {
         var errors;
 
         req.sanitize('name').trim();
@@ -42,7 +42,7 @@ var userAPI = {
         }
     },
 
-    getUserById: function getUserById(req, res) {
+    getUserById: function(req, res) {
         var search,
             errors;
 
@@ -71,7 +71,7 @@ var userAPI = {
         }
     },
 
-    getUserByEmail: function getUserByEmail(req, res) {
+    getUserByEmail: function(req, res) {
         var email,
             errors;
 
