@@ -1,6 +1,5 @@
 var mongoAPI = require('../mongo-api'),
-    groupService = require('../services/group-service'),
-    apiUtil = require('../util/api-util');
+    groupService = require('../services/group-service');
 
 var groupAPI = {
 
@@ -63,10 +62,10 @@ var groupAPI = {
         if (errors) {
             res.status(400).send(errors);
         } else {
-            mongoAPI.getGroupById(req.params.id).then(function(group) {
+            groupService.getGroupById(req.params.id).then(function(group) {
                 res.status(200).send(group);
             }).catch(function(error) {
-                res.status(404).send(error);
+                res.status(error.status).send({ errorMessage: error.errorMessage });
             });
         }
 
@@ -126,25 +125,10 @@ var groupAPI = {
         if (errors) {
             res.status(400).send(errors);
         } else {
-            mongoAPI.getUserById(req.body.userId).then(function(user) {
-                var userInGroup = user.groups.some(function(group) {
-                    return group._id.equals(req.body.groupId);
-                });
-
-                if (userInGroup) {
-                    throw new Error('User is already in this group');
-                }
-                var userSnapshot = apiUtil.createUserSnapshot(user);
-                return mongoAPI.addUserToGroup(req.body.groupId, userSnapshot);
-            }).then(function(result) {
+            groupService.addUserToGroup(req.body.groupId, req.body.userId).then(function(result) {
                 res.status(200).send(result);
             }).catch(function(error) {
-                if (error && error.message) {
-                    error = {
-                        errorMessage: error.message
-                    };
-                }
-                res.status(404).send(error);
+                res.status(error.status).send({ errorMessage: error.errorMessage });
             });
         }
     },

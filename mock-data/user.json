@@ -3,7 +3,9 @@
     "name": "Charles Hill",
     "email": "charles.a.hill1@gmail.com",
     "password": "Password1",
-    "groups": [],
+    "groups": [
+            "3453jlhhjg34534j3hl"
+    ],
     "posts": [],
     "events": []
 }

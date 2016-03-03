@@ -44,7 +44,7 @@ var groupAPI = {
                 groupCollection.find({ _id: ObjectId(id) }).toArray(function(err, result) {
                     if (err) {
                         reject(err);
-                    } else if (result.length === 0) {
+                    } else if (result.length === 0) { // TODO remove this case and just return null
                         reject('No Results Found');
                     } else {
                         resolve(result[0]);
