@@ -9,13 +9,13 @@ var NO_CONN_ERROR = 'ERROR. No Connection';
 
 var groupAPI = {
 
-    setDBConnection: function setDBConnection(connection) {
+    setDBConnection: function(connection) {
         db = connection;
         groupCollection = db.collection('groups');
         log.info('MONGO: Group API ONLINE');
     },
 
-    createNewGroup: function createNewGroup(group) {
+    insertNewGroup: function (group) {
 
         var promise = new Promise(function(resolve, reject) {
             if (!db) {
@@ -25,7 +25,7 @@ var groupAPI = {
                     if (err) {
                         reject(err);
                     } else {
-                        resolve(result.ops[0]);
+                        resolve(result);
                     }
                 });
             }
@@ -34,7 +34,7 @@ var groupAPI = {
         return promise;
     },
 
-    getGroupById: function getGroupById(id) {
+    getGroupById: function(id) {
 
         var promise = new Promise(function(resolve, reject) {
 
@@ -44,7 +44,7 @@ var groupAPI = {
                 groupCollection.find({ _id: ObjectId(id) }).toArray(function(err, result) {
                     if (err) {
                         reject(err);
-                    } else if (result.length === 0) {
+                    } else if (result.length === 0) { // TODO remove this case and just return null
                         reject('No Results Found');
                     } else {
                         resolve(result[0]);
@@ -56,7 +56,7 @@ var groupAPI = {
         return promise;
     },
 
-    getGroupsByName: function getGroupsByName(name) {
+    getGroupsByName: function(name) {
 
         var promise = new Promise(function(resolve, reject) {
             if (!db) {
@@ -77,13 +77,14 @@ var groupAPI = {
         return promise;
     },
 
-    addUserToGroup: function  addUserToGroup(groupId, user) {
+    addUserToGroup: function(groupId, user) {
 
         var promise = new Promise(function(resolve, reject) {
 
             if (!db) {
                 reject(NO_CONN_ERROR);
             } else {
+                // TODO update deprecated method
                 groupCollection.findAndModify(
                     { _id: ObjectId(groupId) },
                     [[ '_id',  'asc']],
@@ -104,7 +105,7 @@ var groupAPI = {
         return promise;
     },
 
-    removeUserFromGroup: function removeUserFromGroup(groupId, userId) {
+    removeUserFromGroup: function(groupId, userId) {
 
         var promise = new Promise(function(resolve, reject) {
             if (!db) {
@@ -112,7 +113,7 @@ var groupAPI = {
             } else {
                 groupCollection.findOneAndUpdate(
                     { _id: ObjectId(groupId) },
-                    { $pull: { users: { _id: ObjectId(userId) }}},
+                    { $pull: { users: { $in: [ObjectId(userId)] }}},
                     { returnOriginal: false })
                 .then(function(result) {
                     resolve(result);

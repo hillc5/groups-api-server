@@ -1,22 +1,14 @@
 {
-    "_id": "0qwe;lkfaoiwj;alkdm;lakdfs",
-    "name": "Test Group",
-    "public": true,
+    "_id": "3453234jkl23o99809823jl",
+    "name": "Group Name",
+    "isPublic": true,
     "users": [
-        {
-            "_id": "56b3f8ff47b4297c0cf86646",
-            "name": "Charles Hill",
-            "email": "charles.a.hill1@gmail.com"
-        },
-        {
-            "_id": "56bc094fb3c55de022468727",
-            "name": "Rikki Voie",
-            "email": "rikkivoie@gmail.com"
-        }
+        "56b3f8ff47b4297c0cf86646",
+        "56bc094fb3c55de022468727"
     ],
     "events": [],
     "posts": [],
-    "tags": [],
+    "tags": [ "tag1", "tag2"],
     "creationDate": "2012-04-23T18:25:43.511Z",
     "ownerId": "56b3f8ff47b4297c0cf86646"
 }

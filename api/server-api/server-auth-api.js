@@ -4,7 +4,7 @@ var mongoAPI = require('../mongo-api'),
 
 var authAPI = {
 
-    validateUser: function validateUser(req, res) {
+    validateUser: function(req, res) {
         var errors;
 
         req.checkBody({
@@ -33,7 +33,7 @@ var authAPI = {
         }
     },
 
-    validateToken: function validateToken(req, res, next) {
+    validateToken: function(req, res, next) {
         var token = (req.body && req.body.access_token) ||
                     (req.query && req.query.access_token) ||
                      req.headers['x-access-token'],

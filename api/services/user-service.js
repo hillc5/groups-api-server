@@ -1,16 +1,8 @@
 var mongoUserAPI = require('../mongo-api/mongo-user-api'),
     mongoAuthAPI = require('../mongo-api/mongo-auth-api'),
     apiUtil = require('../util/api-util'),
-    log = apiUtil.Logger,
+    logger = apiUtil.Logger,
     Promise = require('es6-promise').Promise;
-
-function sendError(error, reject) {
-    if (error.status) {
-        reject(error);
-    } else {
-        reject({ status: 500, errorMessage: error.errmsg });
-    }
-}
 
 var userService = {
 
@@ -30,9 +22,11 @@ var userService = {
                 return mongoUserAPI.insertNewUser(newUser);
             }).then(function(result) {
                 var user = result.ops[0];
+                logger.info('MONGO: User created with id', user._id);
                 resolve({ user: user, token: authToken });
             }).catch(function(error) {
-                sendError(error, reject);
+                logger.error('MONGO: Error with user creation:', error);
+                apiUtil.sendError(error, reject);
             });
         });
 
@@ -43,14 +37,14 @@ var userService = {
         var promise = new Promise(function(resolve, reject) {
             mongoUserAPI.getUserById(id).then(function(result) {
                 if (result === null) {
-                    log.info('MONGO: No user found for ', id);
+                    logger.info('MONGO: No user found for ', id);
                     throw { status: 400, errorMessage: 'There is no user with id: ' + id };
                 } else {
-                    log.info('MONGO: 1 user found for ', id);
+                    logger.info('MONGO: 1 user found for ', id);
                     resolve(result);
                 }
             }).catch(function(error) {
-                sendError(error, reject);
+                apiUtil.sendError(error, reject);
             });
         });
 
@@ -61,14 +55,14 @@ var userService = {
         var promise = new Promise(function(resolve, reject) {
             mongoUserAPI.getUserByEmail(email).then(function(result) {
                 if (result === null) {
-                    log.info('MONGO: No user found for ', email);
+                    logger.info('MONGO: No user found for ', email);
                     throw { status: 400, errorMessage: 'There is no user with email: ' + email };
                 } else {
-                    log.info('MONGO: 1 user found for ', email);
+                    logger.info('MONGO: 1 user found for ', email);
                     resolve(result);
                 }
             }).catch(function(error) {
-                sendError(error, reject);
+                apiUtil.sendError(error, reject);
             });
 
         });
