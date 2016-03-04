@@ -104,7 +104,7 @@ var userAPI = {
             } else {
                 userCollection.findOneAndUpdate(
                     { _id: ObjectId(userId) },
-                    { $pull: { groups: { _id: ObjectId(groupId) }}},
+                    { $pull: { groups: { $in: [ ObjectId(groupId) ] }}},
                     { returnOriginal: false }
                 ).then(function(result) {
                     resolve(result);

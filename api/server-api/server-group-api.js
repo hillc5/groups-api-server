@@ -134,9 +134,7 @@ var groupAPI = {
     },
 
     removeUserFromGroup: function(req, res) {
-        var errors,
-            updatedGroup,
-            groupId;
+        var errors;
 
         req.sanitize('groupId').trim();
         req.sanitize('userId').trim();
@@ -162,24 +160,10 @@ var groupAPI = {
         if (errors) {
             res.status(400).send(errors);
         } else {
-            groupId = req.body.groupId;
-            mongoAPI.getGroupById(groupId).then(function(result) {
-                if (result.ownerId === req.body.userId) {
-                    throw new Error('Cannot remove owner of the group');
-                }
-                return mongoAPI.removeUserFromGroup(groupId, req.body.userId);
-            }).then(function(result) {
-                updatedGroup = result;
-                return mongoAPI.removeGroupFromUser(req.body.userId, groupId);
-            }).then(function() {
+            groupService.removeUserFromGroup(req.body.groupId, req.body.userId).then(function(updatedGroup) {
                 res.status(200).send(updatedGroup);
             }).catch(function(error) {
-                if (error && error.message) {
-                    error = {
-                        errorMessage: error.message
-                    };
-                }
-                res.status(404).send(error);
+                res.status(error.status).send({ errorMessage: error.errorMessage });
             });
         }
 

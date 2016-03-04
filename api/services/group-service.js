@@ -97,6 +97,28 @@ var groupService = {
         });
 
         return promise;
+    },
+
+    removeUserFromGroup: function(groupId, userId) {
+        var promise = new Promise(function(resolve, reject) {
+            mongoGroupAPI.getGroupById(groupId).then(function(result) {
+                if (result.ownerId === userId) {
+                    throw { status: 400, errorMessage: 'Cannot delete the owner of the group: ' + userId };
+                }
+                return Promise.all([
+                    mongoGroupAPI.removeUserFromGroup(groupId, userId),
+                    mongoUserAPI.removeGroupFromUser(userId, groupId)
+                ]);
+            }).then(function(results) {
+                logger.info('MONGO: Removed user ' + userId + ' from group ' + groupId);
+                resolve(results[0].value);
+            }).catch(function(error) {
+                logger.error('MONGO: Error removing user ' + userId + ' from group ' + groupId);
+                apiUtil.sendError(error, reject);
+            });
+        });
+
+        return promise;
     }
 
 };
