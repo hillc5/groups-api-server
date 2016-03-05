@@ -5,7 +5,7 @@ var Promise = require('es6-promise').Promise,
 var db = null;
 var userCollection = null;
 
-var NO_CONN_ERROR = 'ERROR. No Connection';
+var NO_CONN_ERROR = { status: 503, errorMessage: 'ERROR. No Connection' };
 
 var userAPI = {
 
