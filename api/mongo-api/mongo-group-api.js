@@ -39,12 +39,11 @@ var groupAPI = {
             if (!db) {
                 reject(NO_CONN_ERROR);
             } else {
-                groupCollection.find({ _id: ObjectId(id) }).toArray(function(err, result) {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        resolve(result);
-                    }
+                groupCollection.find({ _id: ObjectId(id) }).limit(1).next()
+                .then(function(result) {
+                    resolve(result);
+                }).catch(function(error) {
+                    reject(error);
                 });
             }
         });

@@ -30,7 +30,7 @@ var groupService = {
                     mongoUserAPI.addGroupToUser(userId, groupId)
                 ]);
             }).then(function(results) {
-                groupResult = results[0];
+                groupResult = results[0].group;
                 logger.info('MONGO: Group created with id', groupResult._id);
                 resolve({ group: groupResult });
             }).catch(function(error) {
@@ -45,7 +45,7 @@ var groupService = {
     getGroupById: function(id) {
         var promise = new Promise(function(resolve, reject) {
             mongoGroupAPI.getGroupById(id).then(function(result) {
-                if (!result.length) {
+                if (!result) {
                     throw { status: 404, errorMessage: 'There is no group with id ' + id };
                 }
                 logger.info('MONGO: Found group with id:', id);

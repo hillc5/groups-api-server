@@ -19,16 +19,12 @@ var userAPI = {
 
         var promise = new Promise(function(resolve, reject) {
             if (!db) {
-                reject('ERROR.  No Connection');
+                reject(NO_CONN_ERROR);
             } else {
-                userCollection.insert(user, function(err, result) {
-                    if (err) {
-                        log.error(err);
-                        reject(err);
-                    } else {
-                        log.info('MONGO: New User inserted into db:', result.ops[0]._id);
-                        resolve(result);
-                    }
+                userCollection.insertOne(user).then(function(result) {
+                    resolve(result);
+                }).catch(function(error) {
+                    reject(error);
                 });
             }
         });
