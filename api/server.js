@@ -38,7 +38,6 @@ function startAPIServer() {
         next();
     });
 
-    // AUTH APIS
     app.post('/api/create-user', userAPI.createUser);
     app.post('/api/auth/validate-user', authAPI.validateUser);
 
