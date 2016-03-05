@@ -11,17 +11,18 @@ var userService = {
             var authToken;
 
             mongoUserAPI.getUserByEmail(email).then(function(result) {
+                var newUser;
                 if (result !== null) {
                     throw { status: 400, errorMessage: 'A user already exists with email: ' + email };
-                } else {
-                    return mongoAuthAPI.storeUserCredentials(email, password);
                 }
-            }).then(function(token) {
-                var newUser = apiUtil.createDefaultUser(name, email);
-                authToken = token;
-                return mongoUserAPI.insertNewUser(newUser);
-            }).then(function(result) {
-                var user = result.ops[0];
+                newUser = apiUtil.createDefaultUser(name, email);
+                return Promise.all([
+                    mongoAuthAPI.storeUserCredentials(email, password),
+                    mongoUserAPI.insertNewUser(newUser)
+                ]);
+            }).then(function(results) {
+                var user = results[1].ops[0];
+                authToken = results[0];
                 logger.info('MONGO: User created with id', user._id);
                 resolve({ user: user, token: authToken });
             }).catch(function(error) {
