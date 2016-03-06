@@ -10,7 +10,7 @@ module.exports = {
         if (error.status) {
             reject(error);
         } else {
-            reject({ status: 500, errorMessage: error.errmsg });
+            reject({ status: 500, errorMessage: error.errmsg || 'Unexpected Error' });
         }
     },
 

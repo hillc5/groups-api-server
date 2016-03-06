@@ -95,7 +95,7 @@ var authAPI = {
         var promise = new Promise(function(resolve, reject) {
             authCollection.find({ _id: ObjectId(id) }).limit(1).next()
             .then(function(result) {
-                resolve(result);
+                resolve(result.signature);
             }).catch(function(error) {
                 reject(error);
             });
