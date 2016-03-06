@@ -37,8 +37,7 @@ var authAPI = {
                      req.headers['x-access-token'];
 
 
-        authService.validateToken(token).then(function(result) {
-            req.decoded = result;
+        authService.validateToken(token).then(function() {
             next();
         }).catch(function(error) {
             res.status(error.status).send({ errorMessage: error.errorMessage });
