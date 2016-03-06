@@ -1,5 +1,5 @@
 var express = require('express'),
-    connectToMongo = require('./mongo-api.js').connect,
+    connectToMongo = require('./mongo-api/mongo-db-api').connect,
     config = require('./config/config'),
     log = require('./util/api-util').Logger,
 
@@ -51,7 +51,6 @@ function startAPIServer() {
 
     // GROUP APIS
     app.get('/api/get-group/id/:id', groupAPI.getGroupById);
-    app.get('/api/get-group/name/:name', groupAPI.getGroupsByName);
     app.post('/api/create-group', groupAPI.createGroup);
     app.put('/api/update-group/add-user', groupAPI.addUserToGroup);
     app.put('/api/update-group/remove-user', groupAPI.removeUserFromGroup);

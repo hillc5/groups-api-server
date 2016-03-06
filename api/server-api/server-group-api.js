@@ -1,5 +1,4 @@
-var mongoAPI = require('../mongo-api'),
-    groupService = require('../services/group-service');
+var groupService = require('../services/group-service');
 
 var groupAPI = {
 
@@ -69,33 +68,6 @@ var groupAPI = {
             });
         }
 
-    },
-
-    getGroupsByName: function(req, res) {
-        var name,
-            errors;
-
-        req.sanitize('name').trim();
-
-        req.checkParams({
-            'name': {
-                notEmpty: true
-            }
-        });
-
-        errors = req.validationErrors();
-
-        if (errors) {
-            res.status(400).send(errors);
-        } else {
-            name = req.params.name;
-
-            mongoAPI.getGroupsByName(name).then(function(response) {
-                res.status(200).send(response);
-            }, function() {
-                res.status(404).send( { errorMessage: 'No groups with the name ' + req.params.name });
-            });
-        }
     },
 
     addUserToGroup: function(req, res) {
