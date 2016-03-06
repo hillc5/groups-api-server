@@ -6,13 +6,14 @@ var db = null;
 var groupCollection = null;
 
 var NO_CONN_ERROR = { status: 503, errorMessage: 'ERROR. No Connection' };
+var MONGO_GROUP = 'MONGO_GROUP_API';
 
 var groupAPI = {
 
     setDBConnection: function(connection) {
         db = connection;
         groupCollection = db.collection('groups');
-        logger.info('MONGO: Group API ONLINE');
+        logger.info(MONGO_GROUP, 'Group API ONLINE');
     },
 
     insertNewGroup: function (group) {
@@ -22,8 +23,10 @@ var groupAPI = {
                 reject(NO_CONN_ERROR);
             } else {
                 groupCollection.insertOne(group).then(function(result) {
+                    logger.info(MONGO_GROUP, 'Successfully inserted new group into db');
                     resolve(result);
                 }).catch(function(error) {
+                    logger.error(MONGO_GROUP, 'Error inserting group into db', group.name);
                     reject(error);
                 });
             }
@@ -41,8 +44,11 @@ var groupAPI = {
             } else {
                 groupCollection.find({ _id: ObjectId(id) }).limit(1).next()
                 .then(function(result) {
+                    var message = result ? 'Group found for' : 'No Group found for';
+                    logger.info(MONGO_GROUP, message, id);
                     resolve(result);
                 }).catch(function(error) {
+                    logger.error(MONGO_GROUP, 'Error retrieving group for', id);
                     reject(error);
                 });
             }
@@ -63,8 +69,10 @@ var groupAPI = {
                     { $push: { users: userId }},
                     { returnOriginal: false }
                 ).then(function(result) {
+                    logger.info(MONGO_GROUP, 'Successfully added user', userId, 'to group', groupId);
                     resolve(result);
                 }).catch(function(error) {
+                    logger.error(MONGO_GROUP, 'Error adding user', userId, 'to group', groupId);
                     reject(error);
                 });
             }
@@ -84,8 +92,10 @@ var groupAPI = {
                     { $pull: { users: { $in: [ObjectId(userId)] }}},
                     { returnOriginal: false }
                 ).then(function(result) {
+                    logger.info(MONGO_GROUP, 'Successfully removed user', userId, 'from group', groupId);
                     resolve(result);
                 }).catch(function(error) {
+                    logger.error(MONGO_GROUP, 'Error removing user', userId, 'from group', groupId);
                     reject(error);
                 });
             }

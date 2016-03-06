@@ -5,7 +5,9 @@ var mongoAuthAPI = require('../mongo-api/mongo-auth-api'),
     Promise = require('es6-promise').Promise,
     config = require('../config/config'),
     apiUtil = require('../util/api-util'),
-    logger = apiUtil.Logger;
+    logger = apiUtil.Logger,
+
+    AUTH_SERVICE = 'AUTH_SERVICE';
 
 function encrypt(phrase) {
 
@@ -108,14 +110,14 @@ var authService = {
                     password: hash,
                     signature: signature
                 };
-
+                logger.info(AUTH_SERVICE, 'Attempting to insert user credentials for', email);
                 return mongoAuthAPI.insertUserCredentials(authUser);
             }).then(function(result) {
-                logger.info('MONGO: Stored credentials for user with email', email);
+                logger.info(AUTH_SERVICE, 'Attempting to sign token for', email);
                 var token = signJWTToken(result.ops[0]._id, signature);
                 resolve(token);
             }).catch(function(error) {
-                logger.error('MONGO: Error storing credentials for user with email', email, 'error: ' + error);
+                logger.error(AUTH_SERVICE, 'Error while storing credentials for', email);
                 apiUtil.sendError(error, reject);
             });
         });
@@ -129,6 +131,7 @@ var authService = {
             var signature,
                 id;
 
+            logger.info(AUTH_SERVICE, 'Getting credentials for', email);
             mongoAuthAPI.getCredentialsByEmail(email).then(function(credentials) {
                 if (!credentials) {
                     throw { status: 401, errorMessage: 'There is no user with email address: ' + email };
@@ -136,14 +139,15 @@ var authService = {
                 signature = credentials.signature;
                 id = credentials._id;
 
+                logger.info(AUTH_SERVICE, 'Comparing passwords');
                 return compare(password, credentials.password);
 
             }).then(function() {
                 var token = signJWTToken(id, signature);
-                logger.info('MONGO: User validated with email', email);
+                logger.info(AUTH_SERVICE, 'User validated with email', email);
                 resolve(token);
             }).catch(function(error) {
-                logger.error('MONGO: Unable to validate user with email', email, 'error:', error);
+                logger.error(AUTH_SERVICE, 'Unable to validate user with email', email, 'error:', error);
                 apiUtil.sendError(error, reject);
             });
         });
@@ -154,20 +158,23 @@ var authService = {
     validateToken: function(token) {
 
         var promise = new Promise(function(resolve, reject) {
+            logger.info(AUTH_SERVICE, 'Attempting initial decode of token');
             decodeJWTToken(token).then(function(decoded) {
                 if (!decoded) {
                     throw { status: 401, errorMessage: 'Incorrect token associated with the request' };
                 }
+                logger.info(AUTH_SERVICE, 'Retrieving signature for', decoded.id);
                 return mongoAuthAPI.getUserSignature(decoded.id);
 
             }).then(function(signature) {
+                logger.info(AUTH_SERVICE, 'Verifying token');
                 return verifyJWTToken(token, signature);
 
             }).then(function(result) {
-                logger.info('MONGO: validated token');
+                logger.info(AUTH_SERVICE, 'Token validated');
                 resolve(result);
             }).catch(function(error) {
-                logger.error('MONGO: unable to validate token', 'error:', error);
+                logger.error(AUTH_SERVICE, 'Unable to validate token', 'error:', error);
                 apiUtil.sendError(error, reject);
             });
 

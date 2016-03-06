@@ -6,25 +6,26 @@ var mongo = require('mongodb').MongoClient,
     logger = require('../util/api-util').Logger;
 
 var DB_CONFIG = require('../config/database.js');
+var MONGO_DB = 'MONGO_DB_API';
 
 var db = null;
 
 var utilAPI = {
 
     connect: function() {
-        logger.info('Attempting to connect:', DB_CONFIG.url);
+        logger.info(MONGO_DB, 'Attempting to connect:', DB_CONFIG.url);
         var promise = new Promise(function(resolve, reject) {
             if (db) {
-                logger.info('Already connected to', DB_CONFIG.url);
+                logger.info(MONGO_DB, 'Already connected to', DB_CONFIG.url);
                 resolve();
             } else {
                 mongo.connect(DB_CONFIG.url, function(err, database) {
                     if (err) {
-                        logger.error('ERROR connecting to', DB_CONFIG.url);
+                        logger.error(MONGO_DB, 'ERROR connecting to', DB_CONFIG.url);
                         reject(err);
                     } else {
                         db = database;
-                        logger.info('Connection SUCCESS:', DB_CONFIG.url);
+                        logger.info(MONGO_DB, 'Connection SUCCESS:', DB_CONFIG.url);
 
                         userAPI.setDBConnection(db);
                         groupAPI.setDBConnection(db);
