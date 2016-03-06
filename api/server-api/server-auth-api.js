@@ -1,6 +1,4 @@
-var mongoAPI = require('../mongo-api'),
-    jwt = require('jsonwebtoken'),
-    config = require('../config/config');
+var authService = require('../services/auth-service');
 
 var authAPI = {
 
@@ -25,10 +23,10 @@ var authAPI = {
         if (errors) {
             res.status(400).send(errors);
         } else {
-            mongoAPI.validateUser(req.body.email, req.body.password).then(function(authToken) {
+            authService.validateUser(req.body.email, req.body.password).then(function(authToken) {
                 res.status(200).send({ success: true, token: authToken });
             }).catch(function(error) {
-                res.status(401).send(error);
+                res.status(error.status).send({ errorMessage: error.errorMessage });
             });
         }
     },
@@ -36,29 +34,14 @@ var authAPI = {
     validateToken: function(req, res, next) {
         var token = (req.body && req.body.access_token) ||
                     (req.query && req.query.access_token) ||
-                     req.headers['x-access-token'],
+                     req.headers['x-access-token'];
 
-            decoded = jwt.decode(token);
 
-        if (!decoded) {
-            res.status(401).send({errorMessage: 'No token associated with the request'});
-        } else if(decoded.serverSignature !== config.signature) {
-            res.status(403).send({ errorMessage: 'Token Invalid.  Not associated with this issuer' });
-        } else {
-            mongoAPI.getUserSignature(decoded.id).then(function(result) {
-                jwt.verify(token, result.signature, function(err, decoded) {
-                    if (err) {
-                        res.status(403).send({ errorMessage: 'Token Invalid: ' + err });
-                    } else {
-                        req.decoded = decoded;
-                        next();
-                    }
-                });
-            }).catch(function(error) {
-                res.status(403).send({ errorMessage: 'Token Invalid: ' + error });
-            });
-        }
-
+        authService.validateToken(token).then(function() {
+            next();
+        }).catch(function(error) {
+            res.status(error.status).send({ errorMessage: error.errorMessage });
+        });
     }
 };
 

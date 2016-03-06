@@ -1,5 +1,5 @@
 var mongoUserAPI = require('../mongo-api/mongo-user-api'),
-    mongoAuthAPI = require('../mongo-api/mongo-auth-api'),
+    authService = require('./auth-service'),
     apiUtil = require('../util/api-util'),
     logger = apiUtil.Logger,
     Promise = require('es6-promise').Promise;
@@ -17,7 +17,7 @@ var userService = {
                 }
                 newUser = apiUtil.createDefaultUser(name, email);
                 return Promise.all([
-                    mongoAuthAPI.storeUserCredentials(email, password),
+                    authService.storeUserCredentials(email, password),
                     mongoUserAPI.insertNewUser(newUser)
                 ]);
             }).then(function(results) {
