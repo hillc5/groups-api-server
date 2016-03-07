@@ -1,7 +1,7 @@
 /* eslint-disable */
 var clientMap = {
-    development: { origin: 'http://localhost:' + process.env.PORT },
-    production: { origin: 'http://localhost:3000' }
+    development: { origin: 'http://localhost:8080' },
+    production: { origin: 'http://localhost:8080' }
 };
 
 var auth = require('./auth');
