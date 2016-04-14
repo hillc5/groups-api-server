@@ -40,6 +40,7 @@ function startAPIServer() {
 
     app.post('/api/create-user', userAPI.createUser);
     app.post('/api/auth/validate-user', authAPI.validateUser);
+    app.get('/api/auth/get-user-from-token', authAPI.getUserFromToken);
 
     // All routes underneath this middleware will need a token sent along with
     // the request.

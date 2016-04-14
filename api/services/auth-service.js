@@ -1,4 +1,5 @@
 var mongoAuthAPI = require('../mongo-api/mongo-auth-api'),
+    userService = require('../services/user-service'),
     bcrypt = require('bcrypt'),
     jwt = require('jsonwebtoken'),
     uuid = require('node-uuid'),
@@ -169,7 +170,6 @@ var authService = {
             }).then(function(signature) {
                 logger.info(AUTH_SERVICE, 'Verifying token');
                 return verifyJWTToken(token, signature);
-
             }).then(function(result) {
                 logger.info(AUTH_SERVICE, 'Token validated');
                 resolve(result);
@@ -178,6 +178,37 @@ var authService = {
                 apiUtil.sendError(error, reject);
             });
 
+        });
+
+        return promise;
+    },
+
+    getUserFromToken: function(token) {
+        var promise = new Promise(function(resolve, reject) {
+            var userAuthId;
+            logger.info(AUTH_SERVICE, 'Attempting initial decode of token');
+            decodeJWTToken(token).then(function(decoded) {
+                if (!decoded) {
+                    throw { status: 401, errorMessage: 'Incorrect token associated with the request' };
+                }
+                userAuthId = decoded.id;
+                return mongoAuthAPI.getUserSignature(decoded.id);
+            }).then(function(signature) {
+                logger.info(AUTH_SERVICE, 'Verifying Token');
+                return verifyJWTToken(token, signature);
+            }).then(function() {
+                logger.info(AUTH_SERVICE, 'Retrieving email for', userAuthId);
+                return mongoAuthAPI.getUserEmail(userAuthId);
+            }).then(function(email) {
+                logger.info(AUTH_SERVICE, 'Retrieving user from User Service');
+                return userService.getUserByEmail(email);
+            }).then(function(user) {
+                logger.info(AUTH_SERVICE, 'User retrieved from User Service');
+                resolve(user);
+            }).catch(function(error) {
+                logger.error(AUTH_SERVICE, 'Unable to retrieve User', 'error:', error);
+                apiUtil.sendError(error, reject);
+            });
         });
 
         return promise;
