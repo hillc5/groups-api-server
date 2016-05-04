@@ -78,7 +78,6 @@ var groupService = {
 
                 if (!user) {
                     throw { status: 400, errorMessage: 'There is no user with id: ' + userId };
-
                 }
 
                 if (!group) {
@@ -93,6 +92,7 @@ var groupService = {
                     throw { status: 400, errorMessage: 'Group ' + groupId + ' already contains user ' + userId };
                 }
                 logger.info(GROUP_SERVICE, 'Adding group', groupId, 'and user', userId, 'references');
+                
                 return Promise.all([
                     mongoGroupAPI.addUserToGroup(group._id, user._id),
                     mongoUserAPI.addGroupToUser(user._id, group._id)

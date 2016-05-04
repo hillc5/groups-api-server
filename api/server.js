@@ -38,23 +38,23 @@ function startAPIServer() {
         next();
     });
 
-    app.post('/api/create-user', userAPI.createUser);
-    app.post('/api/auth/validate-user', authAPI.validateUser);
-    app.get('/api/auth/get-user-from-token', authAPI.getUserFromToken);
+    // UNPROTECTED APIS
+    app.post('/api/user', userAPI.createUser);
+    app.post('/api/auth/validate/user', authAPI.validateUser);
+    app.post('/api/auth/validate/token', authAPI.validateToken);
 
     // All routes underneath this middleware will need a token sent along with
     // the request.
     app.use(authAPI.validateToken);
 
-    // USER APIS
-    app.get('/api/get-user/id/:id', userAPI.getUserById);
-    app.get('/api/get-user/email/:email', userAPI.getUserByEmail);
+    // PROTECTED USER APIS
+    app.get('/api/user/:id', userAPI.getUserById);
 
-    // GROUP APIS
-    app.get('/api/get-group/id/:id', groupAPI.getGroupById);
-    app.post('/api/create-group', groupAPI.createGroup);
-    app.put('/api/update-group/add-user', groupAPI.addUserToGroup);
-    app.put('/api/update-group/remove-user', groupAPI.removeUserFromGroup);
+    // PROTECTED GROUP APIS
+    app.get('/api/group/:id', groupAPI.getGroupById);
+    app.post('/api/group', groupAPI.createGroup);
+    app.put('/api/group/:group/user/:user', groupAPI.addUserToGroup);
+    app.delete('/api/group/:group/user/:user', groupAPI.removeUserFromGroup);
 
     app.listen(config.port);
     log.info('Server Listening on ' + config.port + '...');

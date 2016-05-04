@@ -3,12 +3,17 @@
     "name": "Group Name",
     "isPublic": true,
     "users": [
-        "56b3f8ff47b4297c0cf86646",
-        "56bc094fb3c55de022468727"
+        {
+            "_id": "56b3f8ff47b4297c0cf86646",
+            "name": "Charles Hill"
+        }
     ],
     "events": [],
     "posts": [],
     "tags": [ "tag1", "tag2"],
     "creationDate": "2012-04-23T18:25:43.511Z",
-    "ownerId": "56b3f8ff47b4297c0cf86646"
+    "owner": {
+        "_id": "232423lkj234rlkj234234",
+        "name": "Charlie Hill"
+    }
 }

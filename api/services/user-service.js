@@ -1,5 +1,5 @@
 var mongoUserAPI = require('../mongo-api/mongo-user-api'),
-    authService = require('./auth-service'),
+    authService = require('../services/auth-service'),
     apiUtil = require('../util/api-util'),
     logger = apiUtil.Logger,
     Promise = require('es6-promise').Promise,
@@ -52,26 +52,6 @@ var userService = {
                 logger.error(USER_SERVICE, 'Error with user retrieval', id);
                 apiUtil.sendError(error, reject);
             });
-        });
-
-        return promise;
-    },
-
-    getUserByEmail: function(email) {
-        var promise = new Promise(function(resolve, reject) {
-            logger.info(USER_SERVICE, 'Retrieving user with', email);
-            mongoUserAPI.getUserByEmail(email).then(function(result) {
-                if (result === null) {
-                    throw { status: 400, errorMessage: 'There is no user with email: ' + email };
-                } else {
-                    logger.info(USER_SERVICE, 'Found user with', email);
-                    resolve(result);
-                }
-            }).catch(function(error) {
-                logger.error(USER_SERVICE, 'Error with user retrieval', email);
-                apiUtil.sendError(error, reject);
-            });
-
         });
 
         return promise;

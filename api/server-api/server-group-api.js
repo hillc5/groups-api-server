@@ -73,21 +73,21 @@ var groupAPI = {
     addUserToGroup: function(req, res) {
         var errors;
 
-        req.sanitize('groupId').trim();
+        req.sanitize('group').trim();
         req.sanitize('userId').trim();
 
-        req.checkBody({
-            'groupId': {
+        req.checkParams({
+            'group': {
                 notEmpty: true,
                 isMongoId: {
-                    errorMessage: 'id must be a valid Mongo ObjectId'
+                    errorMessage: 'group id must be a valid Mongo ObjectId'
                 }
             },
 
-            'userId': {
+            'user': {
                 notEmpty: true,
                 isMongoId: {
-                    errorMessage: 'user._id must be a valid Mongo ObjectId'
+                    errorMessage: 'user id must be a valid Mongo ObjectId'
                 }
             }
         });
@@ -97,7 +97,7 @@ var groupAPI = {
         if (errors) {
             res.status(400).send(errors);
         } else {
-            groupService.addUserToGroup(req.body.groupId, req.body.userId).then(function(result) {
+            groupService.addUserToGroup(req.params.group, req.params.id).then(function(result) {
                 res.status(200).send(result);
             }).catch(function(error) {
                 res.status(error.status).send({ errorMessage: error.errorMessage });
@@ -111,18 +111,18 @@ var groupAPI = {
         req.sanitize('groupId').trim();
         req.sanitize('userId').trim();
 
-        req.checkBody({
-            'groupId': {
+        req.checkParams({
+            'group': {
                 notEmpty: true,
                 isMongoId: {
-                    errorMessage: 'groupId must be a valid Mongo ObjectId'
+                    errorMessage: 'group Id must be a valid Mongo ObjectId'
                 }
             },
 
-            'userId': {
+            'user': {
                 notEmpty: true,
                 isMongoId: {
-                    errorMessage: 'groupId must be a valid Mongo ObjectId'
+                    errorMessage: 'user Id must be a valid Mongo ObjectId'
                 }
             }
         });
@@ -132,7 +132,7 @@ var groupAPI = {
         if (errors) {
             res.status(400).send(errors);
         } else {
-            groupService.removeUserFromGroup(req.body.groupId, req.body.userId).then(function(updatedGroup) {
+            groupService.removeUserFromGroup(req.params.group, req.params.user).then(function(updatedGroup) {
                 res.status(200).send(updatedGroup);
             }).catch(function(error) {
                 res.status(error.status).send({ errorMessage: error.errorMessage });

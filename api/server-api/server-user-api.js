@@ -69,37 +69,7 @@ var userAPI = {
                 res.status(error.status).send({ errorMessage: error.errorMessage });
             });
         }
-    },
-
-    getUserByEmail: function(req, res) {
-        var email,
-            errors;
-
-        req.sanitize('email').trim();
-
-        req.checkParams({
-            'email': {
-                notEmpty: true,
-                isEmail: {
-                    errorMessage: 'email must be a valid email address'
-                }
-            }
-        });
-
-        errors = req.validationErrors();
-
-        if (errors) {
-            res.status(400).send(errors);
-        } else {
-            email = req.params.email.toLowerCase();
-            userService.getUserByEmail(email).then(function(user) {
-                res.status(200).send(user);
-            }, function(error) {
-                res.status(error.status).send({ errorMessage: error.errorMessage });
-            });
-        }
     }
-
 };
 
 module.exports = userAPI;

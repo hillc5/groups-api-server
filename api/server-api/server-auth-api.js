@@ -30,18 +30,6 @@ var authAPI = {
             });
         }
     },
-    
-    getUserFromToken: function(req, res) {
-        var token = (req.body && req.body.access_token) ||
-                    (req.query && req.query.access_token) ||
-                     req.headers['x-access-token'];
-        
-        authService.getUserFromToken(token).then(function(user) {
-            res.status(200).send({ success: true, user: user });
-        }).catch(function(error) {
-            res.status(error.status).send({ errorMessage: error.errorMessage });
-        });
-    },
 
     validateToken: function(req, res, next) {
         var token = (req.body && req.body.access_token) ||
