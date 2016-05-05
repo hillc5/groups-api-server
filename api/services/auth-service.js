@@ -93,7 +93,7 @@ function signJWTToken(id, secret) {
 
 authService = {
 
-    storeUserCredentials: function(email, password) {
+    storeUserCredentials: function(email, password, userId) {
 
         var promise = new Promise(function(resolve, reject) {
             var signature;
@@ -108,6 +108,7 @@ authService = {
                 var authUser = {
                     email: email,
                     password: hash,
+                    userId: userId,
                     signature: signature
                 };
                 logger.info(AUTH_SERVICE, 'Attempting to insert user credentials for', email);

@@ -40,7 +40,9 @@ function startAPIServer() {
 
     // UNPROTECTED APIS
     app.post('/api/user', userAPI.createUser);
+    // TODO return user _id along with token
     app.post('/api/auth/validate/user', authAPI.validateUser);
+    // TODO implement proper validateToken method that is not middleware
     app.post('/api/auth/validate/token', authAPI.validateToken);
 
     // All routes underneath this middleware will need a token sent along with

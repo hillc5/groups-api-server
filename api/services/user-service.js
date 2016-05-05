@@ -10,7 +10,8 @@ var userService = {
 
     createNewUser: function(name, email, password) {
         var promise = new Promise(function(resolve, reject) {
-            var authToken;
+            var authToken,
+                user;
 
             logger.info(USER_SERVICE, 'Determining if email already exists', email);
             mongoUserAPI.getUserByEmail(email).then(function(result) {
@@ -19,14 +20,14 @@ var userService = {
                     throw { status: 400, errorMessage: 'A user already exists with email: ' + email };
                 }
                 newUser = apiUtil.createDefaultUser(name, email);
-                logger.info(USER_SERVICE, 'Storing user credentials and inserting new user');
-                return Promise.all([
-                    authService.storeUserCredentials(email, password),
-                    mongoUserAPI.insertNewUser(newUser)
-                ]);
+                logger.info(USER_SERVICE, 'Inserting new user');
+                return mongoUserAPI.insertNewUser(newUser);
             }).then(function(results) {
-                var user = results[1].ops[0];
-                authToken = results[0];
+                user = results.ops[0];
+                logger.info(USER_SERVICE, 'Storing User Credentials');
+                return authService.storeUserCredentials(email, password, user._id);
+            }).then(function(results) {
+                authToken = results;
                 logger.info(USER_SERVICE, 'User created with id', user._id);
                 resolve({ user: user, token: authToken });
             }).catch(function(error) {
