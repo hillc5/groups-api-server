@@ -66,22 +66,6 @@ var authAPI = {
         });
 
         return promise;
-    }, 
-    
-    getUserEmail: function(id) {
-        var promise = new Promise(function(resolve, reject) {
-            authCollection.find({ _id: ObjectId(id) }).limit(1).next()
-            .then(function(result) {
-                var message = result ? 'Email found for' : 'No Email found for';
-                logger.info(MONGO_AUTH, message, id);
-                resolve(result.email);
-            }).catch(function(error) {
-                logger.error(MONGO_AUTH, 'Error retrieving Email for', id);
-                reject(error);
-            });
-        });
-        
-        return promise;
     }
 };
 
