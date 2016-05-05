@@ -25,11 +25,11 @@ module.exports = {
         };
     },
 
-    createDefaultGroup: function(name, ownerId, isPublic, tags) {
+    createDefaultGroup: function(name, owner, isPublic, tags) {
         return {
             name: name,
             public: isPublic,
-            ownerId: ownerId,
+            owner: owner,
             users: [],
             events: [],
             tags: tags || [],

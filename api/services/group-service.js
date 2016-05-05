@@ -11,11 +11,8 @@ var groupService = {
     createNewGroup: function(name, ownerId, isPublic, tags) {
         var groupResult,
             group,
-            userId,
+            owner,
             tagsArray;
-
-        tagsArray = apiUtil.listStringToArray(tags);
-        group = apiUtil.createDefaultGroup(name, ownerId, isPublic, tagsArray);
 
         var promise = new Promise(function(resolve, reject) {
 
@@ -24,18 +21,23 @@ var groupService = {
                 if (!user) {
                     throw { status: 400, errorMessage: 'There is no user with id ' + ownerId };
                 }
+                owner = {
+                    _id: user._id,
+                    name: user.name
+                };
+
+                tagsArray = apiUtil.listStringToArray(tags);
+                group = apiUtil.createDefaultGroup(name, owner, isPublic, tagsArray);
                 logger.info(GROUP_SERVICE, 'Attempting to insert new group', name);
-                userId = user._id;
                 return mongoGroupAPI.insertNewGroup(group);
             }).then(function(result) {
                 var groupId = result.ops[0]._id;
-                logger.info(GROUP_SERVICE, 'Adding group', groupId, 'and user', userId, 'references');
-                return Promise.all([
-                    mongoGroupAPI.addUserToGroup(groupId, userId),
-                    mongoUserAPI.addGroupToUser(userId, groupId)
-                ]);
-            }).then(function(results) {
-                groupResult = results[0].value;
+                logger.info(GROUP_SERVICE, 'Adding group', groupId, 'and user', owner._id, 'references');
+                return mongoGroupAPI.addUserToGroup(groupId, owner);
+            }).then(function(result) {
+                groupResult = result.value;
+                return mongoUserAPI.addGroupToUser(owner._id, groupResult);
+            }).then(function() {
                 logger.info(GROUP_SERVICE, 'Group created with id', groupResult._id);
                 resolve({ group: groupResult });
             }).catch(function(error) {
@@ -67,6 +69,8 @@ var groupService = {
 
     addUserToGroup: function(groupId, userId) {
         var promise = new Promise(function(resolve, reject) {
+            var groupResult;
+            
             logger.info(GROUP_SERVICE, 'Retrieving group', groupId, 'and user', userId);
             Promise.all([
                 mongoUserAPI.getUserById(userId),
@@ -84,8 +88,8 @@ var groupService = {
                     throw { status: 400, errorMessage: 'There is no group with id: ' + groupId };
                 }
 
-                userInGroup = user.groups.some(function(id) {
-                    return id.equals(group._id);
+                userInGroup = user.groups.some(function(group) {
+                    return group._id.equals(groupId);
                 });
 
                 if (userInGroup) {
@@ -93,13 +97,14 @@ var groupService = {
                 }
                 logger.info(GROUP_SERVICE, 'Adding group', groupId, 'and user', userId, 'references');
                 
-                return Promise.all([
-                    mongoGroupAPI.addUserToGroup(group._id, user._id),
-                    mongoUserAPI.addGroupToUser(user._id, group._id)
-                ]);
-            }).then(function(results) {
+                // using user._id so that ObjectId(...) works in removeUserFromGroup
+                return mongoGroupAPI.addUserToGroup(groupId, { _id: user._id, name: user.name });
+            }).then(function(result) {
+                groupResult = result.value;
+                return mongoUserAPI.addGroupToUser(userId, groupResult);
+            }).then(function() {
                 logger.info(GROUP_SERVICE, 'Successfully added user ' + userId + ' to group ' + groupId);
-                resolve(results[0]);
+                resolve(groupResult);
             }).catch(function(error) {
                 logger.error(GROUP_SERVICE, 'Error with user addition:', error);
                 apiUtil.sendError(error, reject);

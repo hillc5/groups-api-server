@@ -74,7 +74,7 @@ var groupAPI = {
         var errors;
 
         req.sanitize('group').trim();
-        req.sanitize('userId').trim();
+        req.sanitize('user').trim();
 
         req.checkParams({
             'group': {
@@ -97,7 +97,7 @@ var groupAPI = {
         if (errors) {
             res.status(400).send(errors);
         } else {
-            groupService.addUserToGroup(req.params.group, req.params.id).then(function(result) {
+            groupService.addUserToGroup(req.params.group, req.params.user).then(function(result) {
                 res.status(200).send(result);
             }).catch(function(error) {
                 res.status(error.status).send({ errorMessage: error.errorMessage });

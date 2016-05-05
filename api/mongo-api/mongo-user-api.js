@@ -77,7 +77,7 @@ var userAPI = {
         return promise;
     },
 
-    addGroupToUser: function(userId, groupId) {
+    addGroupToUser: function(userId, group) {
 
         var promise = new Promise(function(resolve, reject) {
 
@@ -86,13 +86,13 @@ var userAPI = {
             } else {
                 userCollection.findOneAndUpdate(
                     { _id: ObjectId(userId) },
-                    { $push: { groups : groupId } },
+                    { $push: { groups : group } },
                     { returnOriginal: false }
                 ).then(function(result) {
-                    logger.info(MONGO_USER, 'Successfully added group', groupId, 'to user', userId);
+                    logger.info(MONGO_USER, 'Successfully added group', group._id, 'to user', userId);
                     resolve(result);
                 }).catch(function(error) {
-                    logger.error(MONGO_USER, 'Error adding group', groupId, 'to user', userId);
+                    logger.error(MONGO_USER, 'Error adding group', group._id, 'to user', userId);
                     reject(error);
                 });
             }
@@ -109,7 +109,7 @@ var userAPI = {
             } else {
                 userCollection.findOneAndUpdate(
                     { _id: ObjectId(userId) },
-                    { $pull: { groups: { $in: [ ObjectId(groupId) ] }}},
+                    { $pull: { groups: { _id: ObjectId(groupId) }}},
                     { returnOriginal: false }
                 ).then(function(result) {
                     logger.info(MONGO_USER, 'Successfully removed group', groupId, 'from user', userId);
