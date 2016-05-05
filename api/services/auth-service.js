@@ -130,6 +130,7 @@ authService = {
 
         var promise = new Promise(function(resolve, reject) {
             var signature,
+                userId,
                 id;
 
             logger.info(AUTH_SERVICE, 'Getting credentials for', email);
@@ -138,6 +139,7 @@ authService = {
                     throw { status: 401, errorMessage: 'There is no user with email address: ' + email };
                 }
                 signature = credentials.signature;
+                userId = credentials.userId;
                 id = credentials._id;
 
                 logger.info(AUTH_SERVICE, 'Comparing passwords');
@@ -146,7 +148,7 @@ authService = {
             }).then(function() {
                 var token = signJWTToken(id, signature);
                 logger.info(AUTH_SERVICE, 'User validated with email', email);
-                resolve(token);
+                resolve({userId: userId, token: token });
             }).catch(function(error) {
                 logger.error(AUTH_SERVICE, 'Unable to validate user with email', email, 'error:', error);
                 apiUtil.sendError(error, reject);

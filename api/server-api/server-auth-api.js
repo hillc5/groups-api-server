@@ -23,8 +23,8 @@ var authAPI = {
         if (errors) {
             res.status(400).send(errors);
         } else {
-            authService.validateUser(req.body.email, req.body.password).then(function(authToken) {
-                res.status(200).send({ success: true, token: authToken });
+            authService.validateUser(req.body.email, req.body.password).then(function(results) {
+                res.status(200).send({ success: true, auth: results });
             }).catch(function(error) {
                 res.status(error.status).send({ errorMessage: error.errorMessage });
             });
