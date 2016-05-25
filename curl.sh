@@ -1,0 +1,6 @@
+#!/bin/bash
+
+for i in {1..100}
+do
+    curl -H "x-access-token: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjU3MmFiMjQ1NWY2NTc2MTA0MjAzNDY4MCIsImlhdCI6MTQ2MzAwOTczMiwiZXhwIjoxNDYzMDEzMzMyLCJhdWQiOiI1NzJhYjI0NTVmNjU3NjEwNDIwMzQ2ODAiLCJpc3MiOiIwYjgzZmM5ZS03MWYzLTQ4MDctYTNmMi1mZDdmZDBjYjc1NTEifQ.18bWS5x48VFwZP7uxSohVVeMsw5hdp6LFL2rlPYMT84" -i 'http://localhost:9000/api/user/572ab2445f6576104203467f'
+done

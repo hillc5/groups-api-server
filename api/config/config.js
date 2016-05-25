@@ -1,6 +1,13 @@
 /* eslint-disable */
+
+var devWhiteList = [ 'http://localhost:8080', 'http://localhost:4200' ];
 var clientMap = {
-    development: { origin: 'http://localhost:8080' },
+    development: {
+        origin: function(origin, callback) {
+            var isWhiteListed = devWhiteList.indexOf(origin) !== -1;
+            callback(null, isWhiteListed);
+        }
+    },
     production: { origin: 'http://localhost:8080' }
 };
 

@@ -3,7 +3,7 @@
         "_id": "56b3f8ff47b4297c0cf86646",
         "name": "Charles Hill",
         "email": "charles.a.hill1@gmail.com",
-        "creationDate": 23423423423424,
+        "creationDate": "2012-04-23T18:25:43.511Z",
         "groups": [
             {
                 "_id": "23c34gq234gq23er0922vlfj909",
@@ -23,7 +23,18 @@
                     {}
                 ],
                 "posts": [],
-                "events": []
+                "events": [
+                  {
+                    "_id": "26b2sl229b0adc0ad2344r3225",
+                    "name": "Charlie's Birthday Party",
+                    "group": {
+                      "_id": "23c34gq234gq23er0922vlfj909",
+                      "name": "Charlie's Group"
+                    },
+                    "location": "Tom's Pub",
+                    "eventDate": "2012-04-23T18:25:43.511Z"
+                  }
+                ]
             }
         ],
         "posts": [],
