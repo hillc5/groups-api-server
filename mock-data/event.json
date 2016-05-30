@@ -2,7 +2,8 @@
   "_id": "26b2sl229b0adc0ad2344r3225",
   "name": "Charlie's Birthday Party",
   "location": "Tom's Pub",
-  "eventDate": "2012-04-23T18:25:43.511Z",
+  "startDate": "2012-04-23T18:25:43.511Z",
+  "endDate": "2012-04-23T19:00:00.000Z",
   "creationDate": "2012-04-23T18:25:43.511Z",
   "group": {
     "_id": "23c34gq234gq23er0922vlfj909",
