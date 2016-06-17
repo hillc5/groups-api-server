@@ -6,11 +6,11 @@ module.exports = {
         name: 'groups-api-server'
     }),
 
-    sendError: function(error, reject) {
+    throwError: function(error) {
         if (error.status) {
-            reject(error);
+            throw error;
         } else {
-            reject({ status: 500, errorMessage: error.errmsg || 'Unexpected Error' });
+            throw { status: 500, errorMessage: error.errmsg || 'Unexpected Error' };
         }
     },
 

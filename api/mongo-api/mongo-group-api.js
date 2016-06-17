@@ -18,7 +18,7 @@ var groupAPI = {
 
     insertNewGroup: function (group) {
 
-        var promise = new Promise(function(resolve, reject) {
+        return new Promise(function(resolve, reject) {
             if (!db) {
                 reject(NO_CONN_ERROR);
             } else {
@@ -31,14 +31,11 @@ var groupAPI = {
                 });
             }
         });
-
-        return promise;
     },
 
     getGroupById: function(id) {
 
-        var promise = new Promise(function(resolve, reject) {
-
+        return new Promise(function(resolve, reject) {
             if (!db) {
                 reject(NO_CONN_ERROR);
             } else {
@@ -53,14 +50,11 @@ var groupAPI = {
                 });
             }
         });
-
-        return promise;
     },
 
     addUserToGroup: function(groupId, user) {
 
-        var promise = new Promise(function(resolve, reject) {
-
+        return new Promise(function(resolve, reject) {
             if (!db) {
                 reject(NO_CONN_ERROR);
             } else {
@@ -77,13 +71,11 @@ var groupAPI = {
                 });
             }
         });
-
-        return promise;
     },
 
     removeUserFromGroup: function(groupId, userId) {
 
-        var promise = new Promise(function(resolve, reject) {
+        return new Promise(function(resolve, reject) {
             if (!db) {
                 reject(NO_CONN_ERROR);
             } else {
@@ -100,8 +92,6 @@ var groupAPI = {
                 });
             }
         });
-
-        return promise;
     }
 
 };

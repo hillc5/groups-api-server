@@ -18,7 +18,7 @@ var userAPI = {
 
     insertNewUser: function(user) {
 
-        var promise = new Promise(function(resolve, reject) {
+        return new Promise(function(resolve, reject) {
             if (!db) {
                 reject(NO_CONN_ERROR);
             } else {
@@ -31,13 +31,11 @@ var userAPI = {
                 });
             }
         });
-
-        return promise;
     },
 
     getUserById: function(id) {
 
-        var promise = new Promise(function(resolve, reject) {
+        return new Promise(function(resolve, reject) {
             if (!db) {
                 reject(NO_CONN_ERROR);
             } else {
@@ -52,13 +50,11 @@ var userAPI = {
                 });
             }
         });
-
-        return promise;
     },
 
     getUserByEmail: function(email) {
 
-        var promise = new Promise(function(resolve, reject) {
+        return new Promise(function(resolve, reject) {
             if (!db) {
                 reject(NO_CONN_ERROR);
             } else {
@@ -73,14 +69,11 @@ var userAPI = {
                 });
             }
         });
-
-        return promise;
     },
 
     addGroupToUser: function(userId, group) {
 
-        var promise = new Promise(function(resolve, reject) {
-
+        return new Promise(function(resolve, reject) {
             if (!db) {
                 reject(NO_CONN_ERROR);
             } else {
@@ -97,13 +90,11 @@ var userAPI = {
                 });
             }
         });
-
-        return promise;
     },
 
     removeGroupFromUser: function(userId, groupId) {
 
-        var promise = new Promise(function(resolve, reject) {
+        return new Promise(function(resolve, reject) {
             if(!db) {
                 reject(NO_CONN_ERROR);
             } else {
@@ -120,8 +111,6 @@ var userAPI = {
                 });
             }
         });
-
-        return promise;
     }
 };
 
